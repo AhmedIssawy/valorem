@@ -3,8 +3,10 @@ import User from "../models/user.model.js";
 import AsyncHandler from "express-async-handler";
 
 const authenticate = AsyncHandler(async (req, res, next) => {
+  console.log(req.cookies);
+
   const token =
-    req.cookies.__valorem_token || req.headers.authorization?.split(" ")[1];
+    req.cookies.__valorem_session || req.headers.authorization?.split(" ")[1];
   if (!token) {
     res.status(401).json({ message: "Not authorized, no token" });
     return;
@@ -20,7 +22,7 @@ const authenticate = AsyncHandler(async (req, res, next) => {
 
 const authorization = (roles) => {
   return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
+    if (!req.user || !roles.includes(req.user.isAdmin ? "admin" : "user")) {
       res.status(403).json({ message: "Access denied" });
       return;
     }
