@@ -1,4 +1,4 @@
-import Product from "../models/product.model.js";
+import Product from "../models/course.model.js";
 import AsyncHandler from "express-async-handler";
 
 const getCourseById = AsyncHandler(async (req, res) => {

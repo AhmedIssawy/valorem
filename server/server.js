@@ -8,10 +8,11 @@ import authRoutes from "./routes/auth.routes.js";
 import customerRoutes from "./routes/customer.routes.js";
 // Import database connection
 import connectDB from "./config/db.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const PORT = process.env.PORT;
-
+app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5137",
