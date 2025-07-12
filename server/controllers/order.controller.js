@@ -1,6 +1,7 @@
 import Order from "../models/order.model.js";
 import AsyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
+import Product from "../models/product.model.js";
 
 const getPageOfOrders = AsyncHandler(async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
@@ -33,16 +34,18 @@ const getOrderById = AsyncHandler(async (req, res) => {
 });
 
 const createOrder = AsyncHandler(async (req, res) => {
-  const { product, shippingAddress, paymentMethod } = req.body;
+  const { product, paymentMethod } = req.body;
   const user = req.user._id;
+  const productDetails = await Product.findById(product._id).lean();
 
   const order = new Order({
     user,
-    product,
+    product: productDetails,
     price: product.price,
-    shippingAddress,
     paymentMethod,
   });
+
+  if (!order) return res.status(400).json({ message: "Order creation failed" });
 
   await User.findByIdAndUpdate(user, { $push: { courses: product._id } });
 
