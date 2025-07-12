@@ -4,4 +4,6 @@ import handleValidationErrors from "../middlewares/handleValidation";
 import { validateOrder } from "../validators/order.validator";
 const router = Router();
 
-router.route("/place", validateOrder, handleValidationErrors, createOrder);
+router.route("/courses");
+
+router.route("/place").post(validateOrder, handleValidationErrors, createOrder);
