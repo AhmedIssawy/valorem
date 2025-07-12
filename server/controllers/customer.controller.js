@@ -17,6 +17,7 @@ const getPageOfCourses = AsyncHandler(async (req, res) => {
   const courses = await Product.find()
     .skip(skip)
     .limit(Number(limit))
+    .select("name price image category")
     .sort({ _id: -1 })
     .lean();
 
