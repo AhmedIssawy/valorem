@@ -1,4 +1,4 @@
-import User from "../models/user.model";
+import User from "../models/user.model.js";
 import AsyncHandler from "express-async-handler";
 
 const getPageOfUsers = AsyncHandler(async (req, res) => {

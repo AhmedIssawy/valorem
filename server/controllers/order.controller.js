@@ -1,6 +1,6 @@
-import Order from "../models/order.model";
+import Order from "../models/order.model.js";
 import AsyncHandler from "express-async-handler";
-import User from "../models/user.model";
+import User from "../models/user.model.js";
 
 const getPageOfOrders = AsyncHandler(async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
@@ -24,7 +24,7 @@ const getOrderById = AsyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const order = await Order.findById(id)
-    .populate("user", "name email")
+    .populate("user", "name emai  l")
     .populate("product", "name price")
     .lean();
   res.status(200).json({
