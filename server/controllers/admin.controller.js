@@ -31,4 +31,46 @@ const getUserById = AsyncHandler(async (req, res) => {
   });
 });
 
-export { getPageOfUsers, getUserById };
+const updateCourse = AsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { name, price, category, image, description } = req.body;
+
+  const course = await User.findByIdAndUpdate(
+    id,
+    {
+      name,
+      price,
+      category,
+      image,
+      description,
+    },
+    { new: true, runValidators: true }
+  );
+  if (!course) {
+    res.status(404).json({ message: "Course not found" });
+    return;
+  }
+  res.status(200).json({
+    data: course,
+  });
+});
+
+const createCourse = AsyncHandler(async (req, res) => {
+  const { name, price, category, image, description } = req.body;
+
+  const course = new User({
+    name,
+    price,
+    category,
+    image,
+    description,
+  });
+
+  await course.save();
+
+  res.status(201).json({
+    data: course,
+  });
+});
+
+export { getPageOfUsers, getUserById, updateCourse, createCourse };
