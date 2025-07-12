@@ -1,7 +1,7 @@
 import Order from "../models/order.model.js";
 import AsyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
-import Product from "../models/product.model.js";
+import Product from "../models/course.model.js";
 
 const getPageOfOrders = AsyncHandler(async (req, res) => {
   const { page = 1, limit = 10 } = req.query;

@@ -1,3 +1,4 @@
+import Product from "../models/course.model.js";
 import User from "../models/user.model.js";
 import AsyncHandler from "express-async-handler";
 
@@ -35,7 +36,7 @@ const updateCourse = AsyncHandler(async (req, res) => {
   const { id } = req.params;
   const { name, price, category, image, description } = req.body;
 
-  const course = await User.findByIdAndUpdate(
+  const course = await Product.findByIdAndUpdate(
     id,
     {
       name,
@@ -58,7 +59,7 @@ const updateCourse = AsyncHandler(async (req, res) => {
 const createCourse = AsyncHandler(async (req, res) => {
   const { name, price, category, image, description } = req.body;
 
-  const course = new User({
+  const course = new Product({
     name,
     price,
     category,
@@ -73,4 +74,18 @@ const createCourse = AsyncHandler(async (req, res) => {
   });
 });
 
-export { getPageOfUsers, getUserById, updateCourse, createCourse };
+const deleteCourse = AsyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const course = await Product.findByIdAndDelete(id);
+  if (!course) {
+    res.status(404).json({ message: "Course not found" });
+    return;
+  }
+
+  res.status(200).json({
+    message: "Course deleted successfully",
+  });
+});
+
+export { getPageOfUsers, getUserById, updateCourse, createCourse, deleteCourse };
