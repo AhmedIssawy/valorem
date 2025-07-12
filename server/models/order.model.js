@@ -7,11 +7,6 @@ const orderSchema = new Schema({
 
   price: { type: Number, required: true },
 
-  shippingAddress: {
-    type: String,
-    required: true,
-  },
-
   paymentMethod: {
     type: String,
     required: true,
@@ -19,7 +14,6 @@ const orderSchema = new Schema({
       "Credit Card",
       "PayPal",
       "Bank Transfer",
-      "Cash",
       "VF Cash",
       "Insta pay",
     ],
