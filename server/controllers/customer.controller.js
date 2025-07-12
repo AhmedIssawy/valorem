@@ -4,7 +4,7 @@ import AsyncHandler from "express-async-handler";
 const getCourseById = AsyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const product = await Product.findById(id).lean();
+  const product = await Product.findById(id).select("-__v").lean();
   res.status(200).json({
     data: product,
   });

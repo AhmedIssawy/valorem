@@ -9,7 +9,7 @@ const getPageOfUsers = AsyncHandler(async (req, res) => {
   const users = await User.find()
     .skip(skip)
     .limit(Number(limit))
-    .select("-password")
+    .select("-password -__v -updatedAt")
     .sort({ _id: -1 })
     .lean();
 
