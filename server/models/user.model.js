@@ -23,6 +23,7 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    courses: [{ type: Schema.Types.ObjectId, ref: "Course" }],
   },
   {
     timestamps: true,
