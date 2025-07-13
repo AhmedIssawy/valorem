@@ -26,4 +26,12 @@ const getPageOfCourses = AsyncHandler(async (req, res) => {
   });
 });
 
-export { getCourseById, getPageOfCourses };
+// const payForOrderUsingPayPal = AsyncHandler(async (req, res) => {});
+
+
+
+export {
+  getCourseById,
+  getPageOfCourses,
+  // payForOrderUsingPayPal,
+};

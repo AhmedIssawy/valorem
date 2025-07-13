@@ -1,12 +1,7 @@
-import { body } from "express-validator";
-const validateOrder = [
-  body("product")
-    .notEmpty()
-    .withMessage("Product information is required")
-    .isObject()
-    .withMessage("Product must be an object"),
+import { body, param } from "express-validator";
 
-  body("product._id")
+const validateOrder = [
+  param("id")
     .notEmpty()
     .withMessage("Product ID is required")
     .isMongoId()
@@ -16,7 +11,7 @@ const validateOrder = [
     .trim()
     .notEmpty()
     .withMessage("Payment method is required")
-    .isIn(["paypal", "stripe", "credit_card", "cash"])
+    .isIn(["paypal", "bank_transfer", "credit_card", "vfc", "insta_pay"])
     .withMessage("Invalid payment method"),
 ];
 
