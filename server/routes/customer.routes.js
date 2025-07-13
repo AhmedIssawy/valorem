@@ -22,5 +22,6 @@ router
 
 router.route("/courses/:id/order").get(authenticate, getOrderById);
 
-router.route("/courses/:id/order/coupon").post(authenticate, redeemCoupon);
+router.route("/courses/:id/order/redeem").post(authenticate, redeemCoupon);
+
 export default router;

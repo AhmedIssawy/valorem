@@ -9,6 +9,7 @@ import {
 import { courseValidator } from "../validators/course.validator.js";
 import handleValidationErrors from "../middlewares/handleValidation.js";
 import { createCoupon } from "../controllers/coupon.controller.js";
+import { getPageOfCoupons } from "../controllers/coupon.controller.js";
 
 const router = Router();
 
@@ -23,6 +24,8 @@ router
     handleValidationErrors,
     createCourse
   );
+
+router.route("/coupons").get(authenticate, authorization, getPageOfCoupons);
 
 router
   .route("/courses/:id")
