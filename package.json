@@ -25,5 +25,8 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "npm run dev --prefix server",
     "client": "npm run dev --prefix client"
+  },
+  "dependencies": {
+    "nanoid": "^5.1.5"
   }
 }

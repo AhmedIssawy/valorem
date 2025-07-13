@@ -9,7 +9,7 @@ const getPageOfUsers = AsyncHandler(async (req, res) => {
   const users = await User.find()
     .skip(skip)
     .limit(Number(limit))
-    .select("-password")
+    .select("-password -__v -updatedAt")
     .sort({ _id: -1 })
     .lean();
 
@@ -57,20 +57,20 @@ const updateCourse = AsyncHandler(async (req, res) => {
 });
 
 const createCourse = AsyncHandler(async (req, res) => {
-  const { name, price, category, image, description } = req.body;
+  // const { name, price, category, image, description } = req.body;
 
-  const course = new Product({
-    name,
-    price,
-    category,
-    image,
-    description,
-  });
+  // const course = new Product({
+  //   name,
+  //   price,
+  //   category,
+  //   image,
+  //   description,
+  // });
 
-  await course.save();
+  // await course.save();
 
   res.status(201).json({
-    data: course,
+    data: "course",
   });
 });
 

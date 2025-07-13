@@ -8,26 +8,30 @@ import {
 } from "../controllers/admin.controller.js";
 import { courseValidator } from "../validators/course.validator.js";
 import handleValidationErrors from "../middlewares/handleValidation.js";
+import { createCoupon } from "../controllers/coupon.controller.js";
+import { getPageOfCoupons } from "../controllers/coupon.controller.js";
 
 const router = Router();
 
-router
-  .route("/users")
-  .get(authenticate, authorization(["admin"]), getPageOfUsers);
+router.route("/users").get(authenticate, authorization, getPageOfUsers);
 
 router
   .route("/courses")
   .post(
     authenticate,
-    authorization(["admin"]),
+    authorization,
     courseValidator,
     handleValidationErrors,
     createCourse
   );
 
+router.route("/coupons").get(authenticate, authorization, getPageOfCoupons);
+
 router
   .route("/courses/:id")
-  .patch(authenticate, authorization(["admin"]), updateCourse)
-  .delete(authenticate, authorization(["admin"]), deleteCourse);
+  .patch(authenticate, authorization, updateCourse)
+  .delete(authenticate, authorization, deleteCourse);
+
+router.route("/coupon/create").post(authenticate, authorization, createCoupon);
 
 export default router;

@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import AsyncHandler from "express-async-handler";
-import { generateToken, generateCookie } from "../utils/index.js";
+import { generateToken, generateCookie } from "../utils/headers.js";
 
 const Register = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
@@ -31,6 +31,10 @@ const Register = AsyncHandler(async (req, res) => {
 });
 
 const Login = AsyncHandler(async (req, res) => {
+  if (req.cookies.__valorem_session) {
+    res.status(400);
+    throw new Error("Already signed in");
+  }
   const { email, password } = req.body;
 
   // Validate user credentials
@@ -52,4 +56,13 @@ const Login = AsyncHandler(async (req, res) => {
   });
 });
 
-export { Register, Login };
+const LogOut = AsyncHandler(async (req, res) => {
+  res.clearCookie("__valorem_session", {
+    sameSite: "strict",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.status(200).json({ message: "Logged out successfully" });
+});
+
+export { Register, Login, LogOut };

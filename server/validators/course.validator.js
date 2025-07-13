@@ -1,33 +1,17 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 
 const courseValidator = [
-  body("name")
+  param("id")
     .notEmpty()
-    .withMessage("Name is required")
-    .isLength({ min: 3, max: 100 })
-    .withMessage("Name must be between 3 and 100 characters"),
+    .withMessage("Product ID is required")
+    .isMongoId()
+    .withMessage("Product ID must be a valid MongoDB ObjectId"),
 
-  body("price")
+  body("paymentMethod")
     .notEmpty()
-    .withMessage("Price is required")
-    .isNumeric()
-    .withMessage("Price must be a number")
-    .isFloat({ min: -1 })
-    .withMessage("Price must be a positive number"),
-
-  body("category")
-    .notEmpty()
-    .withMessage("Category is required")
-    .isLength({ min: 2, max: 50 })
-    .withMessage("Category must be between 2 and 50 characters"),
-
-  body("image").optional().isURL().withMessage("Image must be a valid URL"),
-
-  body("description")
-    .notEmpty()
-    .withMessage("Description is required")
-    .isLength({ min: 10, max: 1000 })
-    .withMessage("Description must be between 10 and 1000 characters"),
+    .withMessage("Payment method is required")
+    .isIn(["credit_card", "paypal", "bank_transfer", "vfc", "insta_pay"])
+    .withMessage("Payment method must be one of: credit_card, paypal, bank_transfer, vfc, insta_pay"),
 ];
 
 export { courseValidator };

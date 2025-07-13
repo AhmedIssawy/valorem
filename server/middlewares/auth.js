@@ -20,14 +20,12 @@ const authenticate = AsyncHandler(async (req, res, next) => {
   }
 });
 
-const authorization = (roles) => {
-  return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.isAdmin ? "admin" : "user")) {
-      res.status(403).json({ message: "Access denied" });
-      return;
-    }
-    next();
-  };
+const authorization = async (req, res, next) => {
+  if (!req.user || !req.user.isAdmin) {
+    res.status(403).json({ message: "Access denied" });
+    return;
+  }
+  next();
 };
 
 export { authenticate, authorization };

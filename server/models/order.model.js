@@ -10,13 +10,11 @@ const orderSchema = new Schema({
   paymentMethod: {
     type: String,
     required: true,
-    enum: [
-      "Credit Card",
-      "PayPal",
-      "Bank Transfer",
-      "VF Cash",
-      "Insta pay",
-    ],
+    enum: ["credit_card", "paypal", "bank_transfer", "vfc", "insta_pay"],
+  },
+  paid: {
+    type: Boolean,
+    default: false,
   },
 });
 
