@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axiosWithToken from '../utils/axiosWithToken';
 
 function AdminDashboard() {
   const [stats, setStats] = useState({ users: 0, courses: 0 });
@@ -7,18 +8,26 @@ function AdminDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // نستخدم بيانات وهمية بدل API
-    const fetchMockStats = () => {
-      setTimeout(() => {
+    const fetchStats = async () => {
+      try {
+        const [usersRes, coursesRes] = await Promise.all([
+          axiosWithToken.get('/users'),
+          axiosWithToken.get('/courses'),
+        ]);
+
         setStats({
-          users: 15, // عدد وهمي للمستخدمين
-          courses: 8, // عدد وهمي للكورسات
+          users: usersRes.data.length,
+          courses: coursesRes.data.length,
         });
+      } catch (err) {
+        console.error('فشل تحميل الإحصائيات:', err);
+        alert('حدث خطأ أثناء تحميل البيانات');
+      } finally {
         setLoading(false);
-      }, 1000); // تأخير بسيط لمحاكاة التحميل
+      }
     };
 
-    fetchMockStats();
+    fetchStats();
   }, []);
 
   const adminCards = [
@@ -34,13 +43,13 @@ function AdminDashboard() {
     },
     {
       title: '📊 لوحة البيانات',
-      description: `عرض وإدارة عدد المستخدمين (${stats.users}) والكورسات (${stats.courses}).`,
-      action: () => navigate('/admin/users'),
+      description: `عدد المستخدمين: ${stats.users} — عدد الكورسات: ${stats.courses}`,
+      action: () => navigate('/admin/stats'),
     },
     {
       title: '🛠️ إدارة الكورسات والمستخدمين',
       description: 'تحكم كامل في تعديل أو حذف الكورسات واستعراض بيانات المستخدمين.',
-      action: () => navigate('/admin/manage'),
+      action: () => navigate('/admin/stats'),
     },
   ];
 

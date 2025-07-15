@@ -1,47 +1,56 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useContext } from 'react'; // ✅ استيراد useContext
-import { LanguageContext } from '../LanguageContext'; // ✅ مسار صحيح لملف السياق
-
-const videoData = {
-  1: [
-    { title: 'Intro to Full Stack', url: 'https://www.youtube.com/embed/ZVnjOPwW4ZA' },
-    { title: 'React Basics', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
-  ],
-  2: [
-    { title: 'What is Data Science?', url: 'https://www.youtube.com/embed/jCzT9XFZ5bw' },
-    { title: 'ML with Scikit-Learn', url: 'https://www.youtube.com/embed/NVDW6GzYIbk' },
-  ],
-  3: [
-    { title: 'Figma Basics', url: 'https://www.youtube.com/embed/FTFaQWZBqQ8' },
-    { title: 'Design Thinking', url: 'https://www.youtube.com/embed/_0Z8CPpmm88' },
-  ],
-  4: [
-    { title: 'Cybersecurity Intro', url: 'https://www.youtube.com/embed/Wy4fAgzKLh8' },
-    { title: 'Ethical Hacking', url: 'https://www.youtube.com/embed/Zsa_lCzAfZk' },
-  ],
-};
+import { useEffect, useState, useContext } from 'react';
+import { LanguageContext } from '../LanguageContext';
+import axiosWithToken from '../utils/axiosWithToken';
 
 function CourseDetails() {
   const { id } = useParams();
-  const courseId = parseInt(id);
-  const videos = videoData[courseId] || [];
   const navigate = useNavigate();
   const { text } = useContext(LanguageContext);
+
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [accessGranted, setAccessGranted] = useState(false);
+
+  useEffect(() => {
+    const checkAccessAndFetch = async () => {
+      try {
+        const accessRes = await axiosWithToken.get(`/purchases/${id}`);
+        if (!accessRes.data.hasAccess) {
+          alert('لا يمكنك مشاهدة هذا الكورس قبل الشراء.');
+          navigate('/courses');
+          return;
+        }
+        setAccessGranted(true);
+
+        const courseRes = await axiosWithToken.get(`/courses/${id}`);
+        setCourse(courseRes.data);
+      } catch (err) {
+        console.error('فشل التحقق من الصلاحية أو تحميل الكورس:', err);
+        alert('حدث خطأ، يرجى المحاولة لاحقًا.');
+        navigate('/courses');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAccessAndFetch();
+  }, [id, navigate]);
+
+  if (loading) return <p style={{ padding: '2rem' }}>جاري التحميل...</p>;
 
   return (
     <div style={{ padding: '2rem' }}>
       <h2>{text.courseVideos}</h2>
 
-      {videos.length === 0 ? (
-        <p style={{ color: 'gray', fontStyle: 'italic' }}>{text.noVideos}</p>
-      ) : (
-        videos.map((vid, idx) => (
+      {accessGranted && course && course.videos?.length > 0 ? (
+        course.videos.map((vid, idx) => (
           <div key={idx} style={{ marginBottom: '2rem' }}>
             <h4>{vid.title}</h4>
             <iframe
               width="100%"
               height="315"
-              src={vid.url}
+              src={vid.url || vid.videoUrl}
               title={vid.title}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -49,6 +58,8 @@ function CourseDetails() {
             />
           </div>
         ))
+      ) : (
+        <p style={{ color: 'gray', fontStyle: 'italic' }}>{text.noVideos}</p>
       )}
 
       <button
@@ -68,6 +79,5 @@ function CourseDetails() {
     </div>
   );
 }
-
 
 export default CourseDetails;

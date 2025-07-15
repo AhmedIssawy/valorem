@@ -14,70 +14,73 @@ import AddCourse from './pages/AddCourse';
 import UploadVideo from './pages/UploadVideo';
 import UsersManagement from './pages/UsersManagement';
 import CoursesManagement from './pages/CoursesManagement';
-
-
-
-
-
+import AdminStatsPage from './pages/AdminStatsPage'; 
 function App() {
   return (
     <>
       <Navbar />
       <Routes>
-  {/* صفحات المستخدم العادي */}
-  <Route path="/" element={<Home />} />
-  <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
-  <Route path="/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
-  <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
-  <Route path="/login" element={<Login />} />
-  <Route path="/register" element={<Register />} />
-  <Route path="/course/:id" element={<ProtectedRoute><CourseDetails /></ProtectedRoute>} />
+        {/* صفحات المستخدم العادي */}
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
+        <Route path="/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
+        <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/course/:id" element={<ProtectedRoute><CourseDetails /></ProtectedRoute>} />
 
-  {/* صفحات الأدمن */}
-  <Route
-    path="/admin"
-    element={
-      <ProtectedRoute allowedRoles={['admin']}>
-        <AdminDashboard />
-      </ProtectedRoute>
-    }
-  />
-  <Route
-    path="/admin/add-course"
-    element={
-      <ProtectedRoute allowedRoles={['admin']}>
-        <AddCourse />
-      </ProtectedRoute>
-    }
-  />
-  <Route
-    path="/admin/upload-video"
-    element={
-      <ProtectedRoute allowedRoles={['admin']}>
-        <UploadVideo />
-      </ProtectedRoute>
-    }
-  />
-  <Route
-    path="/admin/users"
-    element={
-      <ProtectedRoute allowedRoles={['admin']}>
-        <UsersManagement />
-      </ProtectedRoute>
-    }
-  />
-  <Route
-    path="/admin/courses"
-    element={
-      <ProtectedRoute allowedRoles={['admin']}>
-        <CoursesManagement />
-      </ProtectedRoute>
-    }
-  />
-</Routes>
+        {/* صفحات الأدمن */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/add-course"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AddCourse />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/upload-video"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <UploadVideo />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <UsersManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/courses"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <CoursesManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/stats" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminStatsPage />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
 
-            <SocialIcon />
-
+      <SocialIcon />
     </>
   );
 }

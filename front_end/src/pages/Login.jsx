@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { login } from '../redux/appSlice';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios'; // لو حابب تسيبه للتسجيل فقط، تمام
+// أو تقدر تستخدم axiosWithToken على طول
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -22,6 +23,7 @@ function Login() {
       setError('Invalid email format.');
       return;
     }
+    
 
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', {
@@ -31,10 +33,14 @@ function Login() {
 
       const { token, user } = res.data;
 
+      // ✅ خزّن التوكن
       localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      dispatch(login(user));
 
+      // ✅ خزّن بيانات المستخدم
+      localStorage.setItem('user', JSON.stringify(user));
+      dispatch(login(user)); // من الأفضل يكون في redux reducer
+
+      // ✅ توجيه حسب الرول
       if (user.role === 'admin') {
         navigate('/admin');
       } else {
@@ -44,20 +50,6 @@ function Login() {
       console.error('Login failed:', err);
       setError('Email or password is incorrect.');
     }
-  };
-
-  const handleFakeAdminLogin = () => {
-    const dummyAdmin = {
-      firstName: 'Admin',
-      lastName: 'Test',
-      email: 'admin@valorem.com',
-      role: 'admin',
-    };
-
-    localStorage.setItem('token', 'dummy-token');
-    localStorage.setItem('user', JSON.stringify(dummyAdmin));
-    dispatch(login(dummyAdmin));
-    navigate('/admin');
   };
 
   return (
@@ -78,7 +70,7 @@ function Login() {
       <label>Password</label>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
         <input
-          type={showPassword ? 'text' : 'password'}
+          type={showPassword ? "text" : "password"}
           value={password}
           placeholder="Enter your password"
           onChange={(e) => setPassword(e.target.value)}
@@ -89,30 +81,11 @@ function Login() {
           onClick={() => setShowPassword(!showPassword)}
           style={{ marginLeft: '0.5rem' }}
         >
-          {showPassword ? 'Hide' : 'Show'}
+          {showPassword ? "Hide" : "Show"}
         </button>
       </div>
 
-      <>
-        <button onClick={handleLogin} style={buttonStyle}>Login</button>
-
-        <button
-          onClick={handleFakeAdminLogin}
-          style={{
-            marginTop: '1rem',
-            width: '100%',
-            padding: '0.75rem',
-            backgroundColor: '#28a745',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-          }}
-        >
-          دخول كأدمن (تجريبي)
-        </button>
-      </>
+      <button onClick={handleLogin} style={buttonStyle}>Login</button>
     </div>
   );
 }
