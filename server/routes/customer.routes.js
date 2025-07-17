@@ -6,6 +6,7 @@ import { authenticate, authorization } from "../middlewares/auth.js";
 import {
   getPageOfCourses,
   getCourseById,
+  getCourseVideo,
 } from "../controllers/customer.controller.js";
 
 import { redeemCoupon } from "../controllers/coupon.controller.js";
@@ -15,6 +16,8 @@ const router = Router();
 router.route("/courses").get(getPageOfCourses);
 
 router.route("/courses/:id").get(getCourseById);
+
+router.route("/courses/:id/watch").get(authenticate, getCourseVideo);
 
 router
   .route("/courses/:id/place")

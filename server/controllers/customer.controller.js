@@ -26,12 +26,24 @@ const getPageOfCourses = AsyncHandler(async (req, res) => {
   });
 });
 
+const getCourseVideo = AsyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const course = await Product.findById(id).select("video").lean();
+  if (!course || !course.video) {
+    return res.status(404).json({ message: "Video not found" });
+  }
+
+  res.status(200).json({
+    data: course.video,
+  });
+});
+
 // const payForOrderUsingPayPal = AsyncHandler(async (req, res) => {});
-
-
 
 export {
   getCourseById,
   getPageOfCourses,
+  getCourseVideo,
   // payForOrderUsingPayPal,
 };
