@@ -122,7 +122,8 @@ function Login() {
 // ====== STYLES ======
 
 const wrapperStyle = {
-  background: 'linear-gradient(135deg, #7F00FF, #E100FF)',
+  background: 'linear-gradient(135deg, #2c003e, #007bff)', // Deep Violet to Electric Blue
+  fontFamily: 'Nizzoli Rta, sans-serif',
   height: '100vh',
   display: 'flex',
   alignItems: 'center',
@@ -131,14 +132,18 @@ const wrapperStyle = {
 };
 
 const containerStyle = {
-  backgroundColor: '#fff',
+  background: 'linear-gradient(135deg, #ffffffcc, #e0e0ffcc)', // تدرج فاتح مع شفافية
   padding: '2rem',
   borderRadius: '16px',
   width: '100%',
   maxWidth: '400px',
   boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
   textAlign: 'center',
+  fontFamily: 'Aktiv Grotesk, sans-serif',
+  backdropFilter: 'blur(8px)', // لمسة زجاجية جميلة
+  border: '1px solid rgba(255, 255, 255, 0.2)',
 };
+
 
 const logoStyle = {
   width: '80px',
@@ -149,8 +154,10 @@ const titleStyle = {
   marginBottom: '1.5rem',
   fontSize: '1.5rem',
   fontWeight: '600',
-  color: '#6a11cb',
+  color: '#1752c9ff', // Electric Blue
+  fontFamily: 'Nizzoli Rta, sans-serif',
 };
+
 
 const fieldStyle = {
   marginBottom: '1.25rem',
@@ -161,7 +168,7 @@ const labelStyle = {
   display: 'block',
   marginBottom: '0.5rem',
   fontWeight: '500',
-  color: '#333',
+  color: '#222222',
 };
 
 const inputRowStyle = {
@@ -174,7 +181,7 @@ const inputBoxStyle = {
   width: '100%',
   padding: '0.75rem',
   borderRadius: '8px',
-  border: '1px solid #ccc',
+  border: '1px solid #A8FFDA', // Neo Mint
   fontSize: '1rem',
   outline: 'none',
 };
@@ -199,7 +206,7 @@ const eyeButtonStyle = {
   transform: 'translateY(-50%)',
   backgroundColor: 'transparent',
   border: 'none',
-  color: '#6a11cb',
+  color: '#007BFF',
   cursor: 'pointer',
   fontSize: '1.2rem',
   display: 'flex',
@@ -211,8 +218,8 @@ const buttonStyle = {
   width: '70%',
   margin: '1rem auto 0',
   padding: '0.75rem',
-  backgroundColor: '#7F00FF',
-  color: '#fff',
+  backgroundColor: '#007BFF',
+  color: '#FFFFFF',
   border: 'none',
   borderRadius: '8px',
   fontWeight: 'bold',
@@ -224,7 +231,7 @@ const buttonStyle = {
 
 const buttonHoverStyle = {
   transform: 'scale(1.05)',
-  backgroundColor: '#9b00ff',
+  backgroundColor: '#00FFFF', // Bright Cyan
 };
 
 const disabledButtonStyle = {

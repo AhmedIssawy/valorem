@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LanguageContext } from '../LanguageContext';
 import axiosWithToken from '../utils/axiosWithToken';
+import logo from '../assets/logo-full.png'; // تأكد من المسار الصحيح
 
 function Products() {
   const { text } = useContext(LanguageContext);
@@ -22,21 +23,17 @@ function Products() {
         for (const course of courses) {
           try {
             const orderRes = await axiosWithToken.get(`/courses/${course._id}/order`);
-            if (orderRes.data.success) {
-              purchased.push(course._id);
-            }
-          } catch (err) {
-            continue; // لو مفيش طلب، عادي
+            if (orderRes.data.success) purchased.push(course._id);
+          } catch {
+            continue;
           }
         }
         setPurchasedProducts(purchased);
-
       } catch (err) {
         if (err.response?.status === 401) {
           alert('يرجى تسجيل الدخول للوصول إلى المنتجات');
           navigate('/login');
         } else {
-          console.error('فشل تحميل المنتجات:', err.message);
           alert('حدث خطأ أثناء تحميل المنتجات');
         }
       } finally {
@@ -52,7 +49,6 @@ function Products() {
       const res = await axiosWithToken.post(`/courses/${course._id}/place`, {
         paymentMethod: "credit_card",
       });
-      console.log("Order Placed:", res.data);
       setPurchasedProducts((prev) => [...prev, course._id]);
     } catch (err) {
       if (err.response?.status === 409) {
@@ -62,7 +58,6 @@ function Products() {
         alert("انتهت الجلسة. يرجى تسجيل الدخول.");
         navigate("/login");
       } else {
-        console.error("فشل تنفيذ الطلب:", err.response?.data?.message || err.message);
         alert("حدث خطأ أثناء تنفيذ الطلب");
       }
     }
@@ -70,46 +65,28 @@ function Products() {
 
   return (
     <div style={containerStyle}>
-      <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        {text.availableProducts || 'المنتجات المتاحة'}
-      </h2>
+      <img src={logo} alt="background logo" style={bgLogoStyle} />
+
+      <h2 style={headingStyle}>{text.availableProducts || 'Available Courses'}</h2>
 
       {loading ? (
-        <p style={{ textAlign: 'center' }}>جاري التحميل...</p>
+        <p style={{ textAlign: 'center', color: '#fff' }}>جاري التحميل...</p>
       ) : (
         <div style={gridStyle}>
           {products.map((product) => (
-            <div
-              key={product._id}
-              style={cardStyle}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-5px)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
-            >
+            <div key={product._id} style={cardStyle}>
               <div style={imagePlaceholder}>
                 {product.image && (
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: '8px',
-                      objectFit: 'cover',
-                    }}
-                  />
+                  <img src={product.image} alt={product.name} style={imgStyle} />
                 )}
               </div>
 
               <h3 style={titleStyle}>{product.name}</h3>
               <p style={descriptionStyle}>{product.description}</p>
-              <p style={priceStyle}>
-                {text.price || 'السعر'}: ${product.price}
-              </p>
+              <p style={priceStyle}>{text.price || 'السعر'}: ${product.price}</p>
 
               {expandedId === product._id && (
-                <p style={detailStyle}>
-                  {text.category || 'الفئة'}: {product.category}
-                </p>
+                <p style={detailStyle}>{text.category || 'الفئة'}: {product.category}</p>
               )}
 
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
@@ -117,9 +94,7 @@ function Products() {
                   onClick={() => setExpandedId(expandedId === product._id ? null : product._id)}
                   style={learnBtnStyle}
                 >
-                  {expandedId === product._id
-                    ? text.hideDetails || 'إخفاء التفاصيل'
-                    : text.learnMore || 'تفاصيل أكثر'}
+                  {expandedId === product._id ? text.hideDetails || 'إخفاء' : text.learnMore || 'تفاصيل'}
                 </button>
 
                 {purchasedProducts.includes(product._id) ? (
@@ -140,89 +115,119 @@ function Products() {
   );
 }
 
-
-// -------------------- Styles --------------------
+// Styles
 const containerStyle = {
-  padding: '2rem',
-  backgroundColor: '#f8f9fa',
+  position: 'relative',
+  padding: '3rem 2rem',
+  background: 'linear-gradient(135deg, #2c003e, #007bff)',
+  minHeight: '100vh',
+  fontFamily: 'Nizzoli Rta, sans-serif',
+  overflow: 'hidden',
+};
+
+const bgLogoStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '70%',
+  opacity: 0.035,
+  zIndex: 0,
+};
+
+const headingStyle = {
+  textAlign: 'center',
+  color: '#00FFFF',
+  marginBottom: '2rem',
+  fontSize: '2.5rem',
+  fontFamily: 'Nizzoli Rta, sans-serif',
+  zIndex: 1,
+  position: 'relative',
 };
 
 const gridStyle = {
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
   gap: '1.5rem',
+  zIndex: 1,
+  position: 'relative',
 };
 
 const cardStyle = {
   padding: '1.5rem',
-  border: '1px solid #ddd',
-  borderRadius: '10px',
-  backgroundColor: '#fff',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.07)',
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  borderRadius: '16px',
+  background: 'linear-gradient(135deg, rgba(255,255,255,0.15), rgba(200,200,255,0.1))',
+  backdropFilter: 'blur(8px)',
+  border: '1px solid rgba(255, 255, 255, 0.15)',
+  boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
+  color: '#fff',
+  transition: 'transform 0.3s ease',
 };
 
 const imagePlaceholder = {
-  width: '100%',
   height: '150px',
-  backgroundColor: '#e9ecef',
-  borderRadius: '8px',
   marginBottom: '1rem',
+  borderRadius: '8px',
   overflow: 'hidden',
 };
 
+const imgStyle = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  borderRadius: '8px',
+};
+
 const titleStyle = {
-  fontSize: '18px',
+  fontSize: '20px',
   fontWeight: 'bold',
-  color: '#343a40',
   marginBottom: '0.5rem',
+  fontFamily: 'Nizzoli Rta, sans-serif',
 };
 
 const descriptionStyle = {
   fontSize: '14px',
-  color: '#555',
-};
-
-const detailStyle = {
-  fontSize: '14px',
-  color: '#444',
-  marginTop: '0.5rem',
-  fontStyle: 'italic',
+  color: '#e0e0e0',
+  fontFamily: 'Aktiv Grotesk, sans-serif',
 };
 
 const priceStyle = {
-  fontWeight: 'bold',
-  color: '#007bff',
   fontSize: '16px',
-  marginTop: '0.5rem',
+  color: '#00FFFF',
+  fontWeight: 'bold',
+};
+
+const detailStyle = {
+  fontSize: '13px',
+  fontStyle: 'italic',
+  color: '#aaf',
+};
+
+const btnStyleBase = {
+  padding: '0.5rem 1rem',
+  border: 'none',
+  borderRadius: '6px',
+  cursor: 'pointer',
+  fontWeight: 'bold',
+  fontFamily: 'Aktiv Grotesk, sans-serif',
 };
 
 const learnBtnStyle = {
-  padding: '0.5rem 1rem',
+  ...btnStyleBase,
   backgroundColor: '#17a2b8',
   color: '#fff',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
 };
 
 const buyBtnStyle = {
-  padding: '0.5rem 1rem',
+  ...btnStyleBase,
   backgroundColor: '#28a745',
   color: '#fff',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
 };
 
 const watchBtnStyle = {
-  padding: '0.5rem 1rem',
+  ...btnStyleBase,
   backgroundColor: '#ffc107',
   color: '#000',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
-  fontWeight: 'bold',
 };
 
 export default Products;

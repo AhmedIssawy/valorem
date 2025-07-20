@@ -13,6 +13,7 @@ function Navbar() {
   const { lang, text, toggleLang } = useContext(LanguageContext);
 
   const [hovered, setHovered] = useState(null);
+  const [logoutHovered, setLogoutHovered] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -89,7 +90,15 @@ function Navbar() {
           <>
             <li style={userInfoStyle}>{user.firstName} {user.lastName}</li>
             <li>
-              <button onClick={handleLogout} style={logoutBtnStyle}>
+              <button
+                onClick={handleLogout}
+                style={{
+                  ...logoutBtnStyle,
+                  ...(logoutHovered ? logoutBtnHoverStyle : {}),
+                }}
+                onMouseEnter={() => setLogoutHovered(true)}
+                onMouseLeave={() => setLogoutHovered(false)}
+              >
                 <span style={{ marginRight: '6px' }}>🚪</span>{text.logout}
               </button>
             </li>
@@ -106,15 +115,16 @@ function Navbar() {
   );
 }
 
-// ✅ التنسيقات المحسّنة
+// ✅ التنسيقات
 const navbarStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  background: 'linear-gradient(90deg, #4b0082, #6a0dad)',
+  background: 'linear-gradient(90deg, #0f0f1c, #1a1a2e)', // الأسود المائل للكحلي
   padding: '1rem 2rem',
   boxShadow: '0 2px 12px rgba(0, 0, 0, 0.2)',
 };
+
 
 const logoImageStyle = {
   height: '45px',
@@ -140,7 +150,7 @@ const linkStyle = {
 
 const linkHoverStyle = {
   fontSize: '1.15rem',
-  color: '#ffd700',
+  color: '#00eaff', // لبني (Electric Blue)
 };
 
 const userInfoStyle = {
@@ -150,14 +160,20 @@ const userInfoStyle = {
 };
 
 const logoutBtnStyle = {
-  backgroundColor: '#e63946',
-  color: '#fff',
-  border: 'none',
+  backgroundColor: '#00eaff',          // Bright Cyan
+  color: '#4b0082',                    // Deep Violet
+  border: '2px solid #4b0082',
   padding: '0.4rem 0.9rem',
   borderRadius: '20px',
   fontWeight: 'bold',
   cursor: 'pointer',
-  transition: 'background-color 0.3s ease',
+  transition: 'all 0.3s ease',
+  fontSize: '0.95rem',
+};
+
+const logoutBtnHoverStyle = {
+  backgroundColor: '#4b0082',
+  color: '#fff',
 };
 
 const langBtnStyle = {
