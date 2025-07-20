@@ -1,57 +1,104 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { LanguageContext } from '../LanguageContext';
 import { logout } from '../redux/appSlice';
+import axios from 'axios';
+import logoFull from '../assets/logo-full.png';
 
 function Navbar() {
   const user = useSelector((state) => state.app.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const { lang, text, toggleLang } = useContext(LanguageContext);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/login');
+  const [hovered, setHovered] = useState(null);
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:5000/auth/logout', {}, {
+        withCredentials: true,
+      });
+      dispatch(logout());
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   return (
     <nav style={navbarStyle} className="navbar-animated">
-      <div>
-        <Link to="/" style={logoStyle}>Valorem</Link>
-      </div>
+      <img
+        src={logoFull}
+        alt="Valorem Logo"
+        style={{ ...logoImageStyle, cursor: 'pointer' }}
+        onClick={() => navigate('/')}
+      />
 
       <ul style={navLinksStyle}>
-        <li><Link to="/" style={linkStyle}>{text.home}</Link></li>
-        <li><Link to="/about" style={linkStyle}>{text.about}</Link></li>
-        <li><Link to="/courses" style={linkStyle}>{text.courses}</Link></li>
-        <li><Link to="/community" style={linkStyle}>{text.community}</Link></li>
+        {['home', 'about', 'courses', 'community'].map((item, index) => (
+          <li key={item}>
+            <Link
+              to={`/${item === 'home' ? '' : item}`}
+              style={hovered === index ? { ...linkStyle, ...linkHoverStyle } : linkStyle}
+              onMouseEnter={() => setHovered(index)}
+              onMouseLeave={() => setHovered(null)}
+            >
+              {text[item]}
+            </Link>
+          </li>
+        ))}
 
-        {/* رابط واحد للإدمن فقط */}
         {user?.role === 'admin' && (
-          <li><Link to="/admin" style={linkStyle}>{text.admin}</Link></li>
+          <li>
+            <Link
+              to="/admin"
+              style={hovered === 'admin' ? { ...linkStyle, ...linkHoverStyle } : linkStyle}
+              onMouseEnter={() => setHovered('admin')}
+              onMouseLeave={() => setHovered(null)}
+            >
+              {text.admin}
+            </Link>
+          </li>
         )}
 
-        {/* روابط الدخول أو بيانات المستخدم */}
         {!user ? (
           <>
-            <li><Link to="/login" style={linkStyle}>{text.login}</Link></li>
-            <li><Link to="/register" style={linkStyle}>{text.register}</Link></li>
+            <li>
+              <Link
+                to="/login"
+                style={hovered === 'login' ? { ...linkStyle, ...linkHoverStyle } : linkStyle}
+                onMouseEnter={() => setHovered('login')}
+                onMouseLeave={() => setHovered(null)}
+              >
+                {text.login}
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/register"
+                style={hovered === 'register' ? { ...linkStyle, ...linkHoverStyle } : linkStyle}
+                onMouseEnter={() => setHovered('register')}
+                onMouseLeave={() => setHovered(null)}
+              >
+                {text.register}
+              </Link>
+            </li>
           </>
         ) : (
           <>
             <li style={userInfoStyle}>{user.firstName} {user.lastName}</li>
             <li>
-              <button onClick={handleLogout} style={logoutBtnStyle}>{text.logout}</button>
+              <button onClick={handleLogout} style={logoutBtnStyle}>
+                <span style={{ marginRight: '6px' }}>🚪</span>{text.logout}
+              </button>
             </li>
           </>
         )}
 
-        {/* زر تغيير اللغة */}
         <li>
           <button onClick={toggleLang} style={langBtnStyle}>
-            {lang === 'ar' ? 'English' : 'عربي'}
+            🌐 {lang === 'ar' ? 'English' : 'عربي'}
           </button>
         </li>
       </ul>
@@ -59,22 +106,19 @@ function Navbar() {
   );
 }
 
+// ✅ التنسيقات المحسّنة
 const navbarStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  backgroundColor: '#1e1e2f',
+  background: 'linear-gradient(90deg, #4b0082, #6a0dad)',
   padding: '1rem 2rem',
-  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+  boxShadow: '0 2px 12px rgba(0, 0, 0, 0.2)',
 };
 
-const logoStyle = {
-  fontSize: '1.8rem',
-  fontWeight: 'bold',
-  color: '#00d1b2',
-  textDecoration: 'none',
-  fontFamily: 'Poppins, sans-serif',
-  letterSpacing: '1px',
+const logoImageStyle = {
+  height: '45px',
+  objectFit: 'contain',
 };
 
 const navLinksStyle = {
@@ -83,40 +127,48 @@ const navLinksStyle = {
   listStyle: 'none',
   alignItems: 'center',
   margin: 0,
+  padding: 0,
 };
 
 const linkStyle = {
   color: '#ffffff',
   textDecoration: 'none',
-  fontSize: '1rem',
-  fontWeight: 500,
-  transition: 'color 0.3s',
+  fontSize: '1.05rem',
+  fontWeight: 600,
+  transition: 'all 0.3s ease',
+};
+
+const linkHoverStyle = {
+  fontSize: '1.15rem',
+  color: '#ffd700',
 };
 
 const userInfoStyle = {
-  color: '#0f0',
-  fontWeight: 'bold',
-  fontSize: '0.9rem',
+  color: '#b0ffb0',
+  fontWeight: '600',
+  fontSize: '1rem',
 };
 
 const logoutBtnStyle = {
   backgroundColor: '#e63946',
   color: '#fff',
   border: 'none',
-  padding: '0.4rem 0.8rem',
-  borderRadius: '4px',
+  padding: '0.4rem 0.9rem',
+  borderRadius: '20px',
   fontWeight: 'bold',
   cursor: 'pointer',
-  transition: 'background 0.3s',
+  transition: 'background-color 0.3s ease',
 };
 
 const langBtnStyle = {
-  backgroundColor: 'transparent',
-  color: '#fff',
-  border: '1px solid #fff',
-  padding: '0.3rem 0.6rem',
-  borderRadius: '4px',
+  backgroundColor: '#fff',
+  color: '#4b0082',
+  border: 'none',
+  padding: '0.3rem 0.8rem',
+  borderRadius: '20px',
+  fontWeight: 'bold',
   cursor: 'pointer',
+  transition: 'background-color 0.3s ease',
 };
 
 export default Navbar;

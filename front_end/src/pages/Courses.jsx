@@ -1,68 +1,95 @@
-import { useState, useEffect, useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LanguageContext } from '../LanguageContext';
 import axiosWithToken from '../utils/axiosWithToken';
 
-function Courses() {
+function Products() {
   const { text } = useContext(LanguageContext);
-  const [courses, setCourses] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
-  const [purchasedCourses, setPurchasedCourses] = useState([]);
+  const [purchasedProducts, setPurchasedProducts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const saved = localStorage.getItem('purchasedCourses');
-    if (saved) setPurchasedCourses(JSON.parse(saved));
-
-    const fetchCourses = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axiosWithToken.get('/courses');
-        setCourses(res.data);
+        const res = await axiosWithToken.get("/courses");
+        const courses = res.data.data;
+        setProducts(courses);
+
+        const purchased = [];
+        for (const course of courses) {
+          try {
+            const orderRes = await axiosWithToken.get(`/courses/${course._id}/order`);
+            if (orderRes.data.success) {
+              purchased.push(course._id);
+            }
+          } catch (err) {
+            continue; // لو مفيش طلب، عادي
+          }
+        }
+        setPurchasedProducts(purchased);
+
       } catch (err) {
-        console.error('فشل تحميل الكورسات:', err);
-        alert('حدث خطأ أثناء تحميل الكورسات');
+        if (err.response?.status === 401) {
+          alert('يرجى تسجيل الدخول للوصول إلى المنتجات');
+          navigate('/login');
+        } else {
+          console.error('فشل تحميل المنتجات:', err.message);
+          alert('حدث خطأ أثناء تحميل المنتجات');
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCourses();
+    fetchData();
   }, []);
 
-  const handleBuyNow = (course) => {
-    window.open(course.paymentLink, '_blank');
-    setTimeout(() => {
-      alert(`${text.purchased || 'تم الشراء'}: ${course.title}`);
-      const updated = [...purchasedCourses, course._id];
-      setPurchasedCourses(updated);
-      localStorage.setItem('purchasedCourses', JSON.stringify(updated));
-      navigate(`/course/${course._id}`);
-    }, 500);
+  const handleBuyNow = async (course) => {
+    try {
+      const res = await axiosWithToken.post(`/courses/${course._id}/place`, {
+        paymentMethod: "credit_card",
+      });
+      console.log("Order Placed:", res.data);
+      setPurchasedProducts((prev) => [...prev, course._id]);
+    } catch (err) {
+      if (err.response?.status === 409) {
+        alert("لقد اشتريت هذا المنتج مسبقًا.");
+        setPurchasedProducts((prev) => [...prev, course._id]);
+      } else if (err.response?.status === 401) {
+        alert("انتهت الجلسة. يرجى تسجيل الدخول.");
+        navigate("/login");
+      } else {
+        console.error("فشل تنفيذ الطلب:", err.response?.data?.message || err.message);
+        alert("حدث خطأ أثناء تنفيذ الطلب");
+      }
+    }
   };
 
   return (
     <div style={containerStyle}>
       <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        {text.availableCourses || 'الكورسات المتاحة'}
+        {text.availableProducts || 'المنتجات المتاحة'}
       </h2>
 
       {loading ? (
         <p style={{ textAlign: 'center' }}>جاري التحميل...</p>
       ) : (
         <div style={gridStyle}>
-          {courses.map((c) => (
+          {products.map((product) => (
             <div
-              key={c._id}
+              key={product._id}
               style={cardStyle}
               onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-5px)')}
               onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
             >
               <div style={imagePlaceholder}>
-                {c.image && (
+                {product.image && (
                   <img
-                    src={c.image}
-                    alt={c.title}
+                    src={product.image}
+                    alt={product.name}
                     style={{
                       width: '100%',
                       height: '100%',
@@ -73,32 +100,34 @@ function Courses() {
                 )}
               </div>
 
-              <h3 style={titleStyle}>{c.title}</h3>
-              <p style={descriptionStyle}>{c.description}</p>
+              <h3 style={titleStyle}>{product.name}</h3>
+              <p style={descriptionStyle}>{product.description}</p>
               <p style={priceStyle}>
-                {text.price || 'السعر'}: ${c.price}
+                {text.price || 'السعر'}: ${product.price}
               </p>
 
-              {expandedId === c._id && <p style={detailStyle}>{c.details}</p>}
+              {expandedId === product._id && (
+                <p style={detailStyle}>
+                  {text.category || 'الفئة'}: {product.category}
+                </p>
+              )}
 
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
                 <button
-                  onClick={() =>
-                    setExpandedId(expandedId === c._id ? null : c._id)
-                  }
+                  onClick={() => setExpandedId(expandedId === product._id ? null : product._id)}
                   style={learnBtnStyle}
                 >
-                  {expandedId === c._id
+                  {expandedId === product._id
                     ? text.hideDetails || 'إخفاء التفاصيل'
-                    : text.learnMore || 'تعلم المزيد'}
+                    : text.learnMore || 'تفاصيل أكثر'}
                 </button>
 
-                {purchasedCourses.includes(c._id) ? (
-                  <button onClick={() => navigate(`/course/${c._id}`)} style={watchBtnStyle}>
-                    {text.watch || 'شاهد'}
+                {purchasedProducts.includes(product._id) ? (
+                  <button onClick={() => navigate(`/product/${product._id}`)} style={watchBtnStyle}>
+                    {text.watch || 'عرض'}
                   </button>
                 ) : (
-                  <button onClick={() => handleBuyNow(c)} style={buyBtnStyle}>
+                  <button onClick={() => handleBuyNow(product)} style={buyBtnStyle}>
                     {text.buyNow || 'اشترِ الآن'}
                   </button>
                 )}
@@ -111,8 +140,8 @@ function Courses() {
   );
 }
 
-// -------------------- Styles --------------------
 
+// -------------------- Styles --------------------
 const containerStyle = {
   padding: '2rem',
   backgroundColor: '#f8f9fa',
@@ -131,7 +160,6 @@ const cardStyle = {
   backgroundColor: '#fff',
   boxShadow: '0 4px 12px rgba(0,0,0,0.07)',
   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-  position: 'relative',
 };
 
 const imagePlaceholder = {
@@ -197,4 +225,4 @@ const watchBtnStyle = {
   fontWeight: 'bold',
 };
 
-export default Courses;
+export default Products;

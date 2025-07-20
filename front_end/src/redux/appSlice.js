@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  user: null,
+  user: JSON.parse(localStorage.getItem('user')) || null,
+  isAuthenticated: !!JSON.parse(localStorage.getItem('user') || 'null'),
 };
 
 const appSlice = createSlice({
@@ -9,10 +10,14 @@ const appSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      state.user = action.payload; // لازم هنا الـ payload يحتوي على firstName و lastName
+      state.user = action.payload;
+      state.isAuthenticated = true;
+      localStorage.setItem('user', JSON.stringify(action.payload));
     },
     logout: (state) => {
       state.user = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem('user');
     },
   },
 });
