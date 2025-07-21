@@ -14,6 +14,7 @@ function Navbar() {
 
   const [hovered, setHovered] = useState(null);
   const [logoutHovered, setLogoutHovered] = useState(false);
+  const [langHovered, setLangHovered] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -27,21 +28,30 @@ function Navbar() {
     }
   };
 
-  return (
-    <nav style={navbarStyle} className="navbar-animated">
-      <img
-        src={logoFull}
-        alt="Valorem Logo"
-        style={{ ...logoImageStyle, cursor: 'pointer' }}
-        onClick={() => navigate('/')}
-      />
+  const navItems = ['home', 'about', 'courses', 'community'];
 
-      <ul style={navLinksStyle}>
-        {['home', 'about', 'courses', 'community'].map((item, index) => (
+  return (
+    <nav style={navbarStyle} className={lang === 'ar' ? 'text-arabic' : ''}>
+      {/* Logo */}
+      <div style={logoContainerStyle}>
+        <img
+          src={logoFull}
+          alt="Valorem Logo"
+          style={logoImageStyle}
+          onClick={() => navigate('/')}
+        />
+      </div>
+
+      {/* Navigation Links */}
+      <ul style={{...navLinksStyle, direction: lang === 'ar' ? 'rtl' : 'ltr'}}>
+        {navItems.map((item, index) => (
           <li key={item}>
             <Link
               to={`/${item === 'home' ? '' : item}`}
-              style={hovered === index ? { ...linkStyle, ...linkHoverStyle } : linkStyle}
+              style={{
+                ...linkStyle,
+                ...(hovered === index ? linkHoverStyle : {})
+              }}
               onMouseEnter={() => setHovered(index)}
               onMouseLeave={() => setHovered(null)}
             >
@@ -50,25 +60,34 @@ function Navbar() {
           </li>
         ))}
 
+        {/* Admin Link */}
         {user?.role === 'admin' && (
           <li>
             <Link
               to="/admin"
-              style={hovered === 'admin' ? { ...linkStyle, ...linkHoverStyle } : linkStyle}
+              style={{
+                ...linkStyle,
+                ...(hovered === 'admin' ? adminLinkHoverStyle : {})
+              }}
               onMouseEnter={() => setHovered('admin')}
               onMouseLeave={() => setHovered(null)}
             >
+              <span style={{ marginLeft: lang === 'ar' ? '0' : '6px', marginRight: lang === 'ar' ? '6px' : '0' }}>👑</span>
               {text.admin}
             </Link>
           </li>
         )}
 
+        {/* Auth Links */}
         {!user ? (
           <>
             <li>
               <Link
                 to="/login"
-                style={hovered === 'login' ? { ...linkStyle, ...linkHoverStyle } : linkStyle}
+                style={{
+                  ...authLinkStyle,
+                  ...(hovered === 'login' ? authLinkHoverStyle : {})
+                }}
                 onMouseEnter={() => setHovered('login')}
                 onMouseLeave={() => setHovered(null)}
               >
@@ -78,7 +97,10 @@ function Navbar() {
             <li>
               <Link
                 to="/register"
-                style={hovered === 'register' ? { ...linkStyle, ...linkHoverStyle } : linkStyle}
+                style={{
+                  ...ctaLinkStyle,
+                  ...(hovered === 'register' ? ctaLinkHoverStyle : {})
+                }}
                 onMouseEnter={() => setHovered('register')}
                 onMouseLeave={() => setHovered(null)}
               >
@@ -88,7 +110,13 @@ function Navbar() {
           </>
         ) : (
           <>
-            <li style={userInfoStyle}>{user.firstName} {user.lastName}</li>
+            {/* User Info */}
+            <li style={userInfoStyle}>
+              <span style={{ marginLeft: lang === 'ar' ? '0' : '8px', marginRight: lang === 'ar' ? '8px' : '0' }}>👤</span>
+              {user.firstName} {user.lastName}
+            </li>
+            
+            {/* Logout Button */}
             <li>
               <button
                 onClick={handleLogout}
@@ -99,15 +127,30 @@ function Navbar() {
                 onMouseEnter={() => setLogoutHovered(true)}
                 onMouseLeave={() => setLogoutHovered(false)}
               >
-                <span style={{ marginRight: '6px' }}>🚪</span>{text.logout}
+                <span style={{ marginLeft: lang === 'ar' ? '0' : '6px', marginRight: lang === 'ar' ? '6px' : '0' }}>
+                  🚪
+                </span>
+                {text.logout}
               </button>
             </li>
           </>
         )}
 
+        {/* Language Toggle */}
         <li>
-          <button onClick={toggleLang} style={langBtnStyle}>
-            🌐 {lang === 'ar' ? 'English' : 'عربي'}
+          <button 
+            onClick={toggleLang} 
+            style={{
+              ...langBtnStyle,
+              ...(langHovered ? langBtnHoverStyle : {})
+            }}
+            onMouseEnter={() => setLangHovered(true)}
+            onMouseLeave={() => setLangHovered(false)}
+          >
+            <span style={{ marginLeft: lang === 'ar' ? '0' : '6px', marginRight: lang === 'ar' ? '6px' : '0' }}>
+              🌐
+            </span>
+            {lang === 'ar' ? 'English' : 'عربي'}
           </button>
         </li>
       </ul>
@@ -115,76 +158,215 @@ function Navbar() {
   );
 }
 
-// ✅ التنسيقات
+// ========== STYLES ==========
 const navbarStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  background: 'linear-gradient(90deg, #0f0f1c, #1a1a2e)', // الأسود المائل للكحلي
+  background: `
+    linear-gradient(90deg, 
+      rgba(76, 29, 149, 0.95) 0%,    /* Deep Violet with transparency */
+      rgba(55, 48, 163, 0.95) 50%,   /* Deep Violet Dark with transparency */
+      rgba(76, 29, 149, 0.95) 100%   /* Deep Violet with transparency */
+    )
+  `,
+  backdropFilter: 'blur(20px)',
   padding: '1rem 2rem',
-  boxShadow: '0 2px 12px rgba(0, 0, 0, 0.2)',
+  boxShadow: '0 4px 20px rgba(76, 29, 149, 0.3)',
+  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+  position: 'sticky',
+  top: 0,
+  zIndex: 1000,
+  transition: 'all 0.3s ease',
 };
 
+const logoContainerStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  cursor: 'pointer',
+  transition: 'transform 0.3s ease',
+  ':hover': {
+    transform: 'scale(1.05)',
+  }
+};
 
 const logoImageStyle = {
-  height: '45px',
+  height: '50px',
   objectFit: 'contain',
+  filter: 'drop-shadow(0 2px 8px rgba(255, 255, 255, 0.2))',
+  transition: 'all 0.3s ease',
 };
 
 const navLinksStyle = {
   display: 'flex',
-  gap: '1.5rem',
+  gap: '2rem',
   listStyle: 'none',
   alignItems: 'center',
   margin: 0,
   padding: 0,
+  flexWrap: 'wrap',
 };
 
 const linkStyle = {
+  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif", // Secondary font
   color: '#ffffff',
   textDecoration: 'none',
-  fontSize: '1.05rem',
-  fontWeight: 600,
-  transition: 'all 0.3s ease',
+  fontSize: '1rem',           // --font-size-base
+  fontWeight: 500,            // Medium weight
+  padding: '0.5rem 1rem',
+  borderRadius: '8px',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  position: 'relative',
+  letterSpacing: '0.025em',   // Wide letter spacing
+  textTransform: 'capitalize',
 };
 
 const linkHoverStyle = {
-  fontSize: '1.15rem',
-  color: '#00eaff', // لبني (Electric Blue)
+  color: '#10b981',           // Neo Mint
+  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+  transform: 'translateY(-2px)',
+  textShadow: '0 2px 10px rgba(16, 185, 129, 0.4)',
+};
+
+const adminLinkHoverStyle = {
+  color: '#fbbf24',           // Golden color for admin
+  backgroundColor: 'rgba(251, 191, 36, 0.1)',
+  transform: 'translateY(-2px)',
+  textShadow: '0 2px 10px rgba(251, 191, 36, 0.4)',
+};
+
+const authLinkStyle = {
+  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif",
+  color: '#ffffff',
+  textDecoration: 'none',
+  fontSize: '1rem',
+  fontWeight: 500,
+  padding: '0.6rem 1.2rem',
+  borderRadius: '25px',
+  border: '1px solid rgba(255, 255, 255, 0.3)',
+  transition: 'all 0.3s ease',
+  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+};
+
+const authLinkHoverStyle = {
+  backgroundColor: 'rgba(255, 255, 255, 0.15)',
+  borderColor: 'rgba(255, 255, 255, 0.5)',
+  transform: 'translateY(-2px)',
+};
+
+const ctaLinkStyle = {
+  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif",
+  color: '#4c1d95',           // Deep Violet
+  textDecoration: 'none',
+  fontSize: '1rem',
+  fontWeight: 600,            // Semibold
+  padding: '0.6rem 1.5rem',
+  borderRadius: '25px',
+  backgroundColor: '#10b981',  // Neo Mint
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  border: '2px solid #10b981',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+};
+
+const ctaLinkHoverStyle = {
+  backgroundColor: '#059669',  // Neo Mint Dark
+  borderColor: '#059669',
+  transform: 'translateY(-3px) scale(1.05)',
+  boxShadow: '0 8px 20px rgba(16, 185, 129, 0.4)',
 };
 
 const userInfoStyle = {
-  color: '#b0ffb0',
-  fontWeight: '600',
+  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif",
+  color: '#10b981',           // Neo Mint
+  fontWeight: 600,            // Semibold
   fontSize: '1rem',
+  padding: '0.5rem 1rem',
+  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+  borderRadius: '20px',
+  border: '1px solid rgba(16, 185, 129, 0.3)',
+  display: 'flex',
+  alignItems: 'center',
 };
 
 const logoutBtnStyle = {
-  backgroundColor: '#00eaff',          // Bright Cyan
-  color: '#4b0082',                    // Deep Violet
-  border: '2px solid #4b0082',
-  padding: '0.4rem 0.9rem',
-  borderRadius: '20px',
-  fontWeight: 'bold',
+  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif",
+  backgroundColor: '#06b6d4',  // Bright Cyan
+  color: '#4c1d95',           // Deep Violet
+  border: '2px solid #06b6d4',
+  padding: '0.6rem 1.2rem',
+  borderRadius: '25px',
+  fontWeight: 600,            // Semibold
   cursor: 'pointer',
-  transition: 'all 0.3s ease',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   fontSize: '0.95rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  display: 'flex',
+  alignItems: 'center',
 };
 
 const logoutBtnHoverStyle = {
-  backgroundColor: '#4b0082',
-  color: '#fff',
+  backgroundColor: '#0891b2',  // Bright Cyan Dark
+  borderColor: '#0891b2',
+  transform: 'translateY(-3px) scale(1.05)',
+  boxShadow: '0 8px 20px rgba(6, 182, 212, 0.4)',
 };
 
 const langBtnStyle = {
-  backgroundColor: '#fff',
-  color: '#4b0082',
-  border: 'none',
-  padding: '0.3rem 0.8rem',
-  borderRadius: '20px',
-  fontWeight: 'bold',
+  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif",
+  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  color: '#4c1d95',           // Deep Violet
+  border: '2px solid rgba(255, 255, 255, 0.3)',
+  padding: '0.5rem 1rem',
+  borderRadius: '25px',
+  fontWeight: 500,            // Medium
   cursor: 'pointer',
-  transition: 'background-color 0.3s ease',
+  transition: 'all 0.3s ease',
+  fontSize: '0.9rem',
+  display: 'flex',
+  alignItems: 'center',
 };
+
+const langBtnHoverStyle = {
+  backgroundColor: '#ffffff',
+  borderColor: '#4c1d95',
+  transform: 'translateY(-2px)',
+  boxShadow: '0 4px 15px rgba(76, 29, 149, 0.2)',
+};
+
+// Add responsive styles
+const mediaQueries = `
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.8rem 1rem !important;
+    flex-wrap: wrap;
+  }
+  
+  .nav-links {
+    gap: 1rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .logo-image {
+    height: 40px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-links {
+    display: none !important;
+  }
+  
+  /* You might want to add a mobile menu toggle here */
+}
+`;
+
+// Add media queries to document head
+if (typeof document !== 'undefined') {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = mediaQueries;
+  document.head.appendChild(styleElement);
+}
 
 export default Navbar;

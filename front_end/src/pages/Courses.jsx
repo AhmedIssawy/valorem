@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LanguageContext } from '../LanguageContext';
 import axiosWithToken from '../utils/axiosWithToken';
-import logo from '../assets/logo-full.png'; // تأكد من المسار الصحيح
+import logo from '../assets/logo-full.png';
 
 function Products() {
   const { text } = useContext(LanguageContext);
@@ -64,64 +64,220 @@ function Products() {
   };
 
   return (
-    <div style={containerStyle}>
-      <img src={logo} alt="background logo" style={bgLogoStyle} />
+    <>
+      {/* Brand-compliant CSS styles */}
+      <style jsx>{`
+        .products-container {
+          font-family: var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif);
+        }
+        
+        .products-heading {
+          font-family: var(--font-primary, 'Nizzoli Rta', 'Helvetica Neue', Arial, sans-serif);
+          animation: slideInDown 0.8s ease-out;
+        }
+        
+        .products-grid {
+          animation: fadeInUp 0.8s ease-out 0.3s;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+        
+        .product-card {
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          transform: translateY(0);
+          opacity: 0;
+          animation: cardFadeIn 0.6s ease-out forwards;
+        }
+        
+        .product-card:nth-child(1) { animation-delay: 0.1s; }
+        .product-card:nth-child(2) { animation-delay: 0.2s; }
+        .product-card:nth-child(3) { animation-delay: 0.3s; }
+        .product-card:nth-child(4) { animation-delay: 0.4s; }
+        .product-card:nth-child(5) { animation-delay: 0.5s; }
+        .product-card:nth-child(6) { animation-delay: 0.6s; }
+        
+        .product-card:hover {
+          transform: translateY(-8px) scale(1.02);
+          box-shadow: 0 20px 40px rgba(76, 29, 149, 0.2) !important;
+        }
+        
+        .product-image {
+          transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-image {
+          transform: scale(1.05);
+        }
+        
+        .btn {
+          font-family: var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          font-weight: var(--font-weight-medium, 500);
+          text-transform: uppercase;
+          letter-spacing: var(--letter-spacing-wide, 0.025em);
+        }
+        
+        .btn:hover {
+          transform: translateY(-2px);
+        }
+        
+        .btn-details:hover {
+          background-color: var(--color-electric-blue-dark, #2563eb) !important;
+          box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-buy:hover {
+          background-color: var(--color-neo-mint-dark, #059669) !important;
+          box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-watch:hover {
+          background-color: var(--color-deep-violet-dark, #3730a3) !important;
+          color: var(--color-white, #ffffff) !important;
+          box-shadow: 0 6px 20px rgba(76, 29, 149, 0.3);
+        }
+        
+        .loading-text {
+          animation: pulse 2s infinite;
+        }
+        
+        @keyframes slideInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes cardFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+          .products-heading {
+            font-size: 2rem !important;
+          }
+          
+          .products-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
+      
+      <div className="products-container" style={containerStyle}>
+        <img src={logo} alt="background logo" style={bgLogoStyle} />
 
-      <h2 style={headingStyle}>{text.availableProducts || 'Available Courses'}</h2>
+        <h2 className="products-heading" style={headingStyle}>
+          {text.availableProducts || 'Available Courses'}
+        </h2>
 
-      {loading ? (
-        <p style={{ textAlign: 'center', color: '#fff' }}>جاري التحميل...</p>
-      ) : (
-        <div style={gridStyle}>
-          {products.map((product) => (
-            <div key={product._id} style={cardStyle}>
-              <div style={imagePlaceholder}>
-                {product.image && (
-                  <img src={product.image} alt={product.name} style={imgStyle} />
+        {loading ? (
+          <p className="loading-text" style={loadingStyle}>
+            جاري التحميل...
+          </p>
+        ) : (
+          <div className="products-grid" style={gridStyle}>
+            {products.map((product, index) => (
+              <div key={product._id} className="product-card" style={cardStyle}>
+                <div style={imagePlaceholder}>
+                  {product.image && (
+                    <img 
+                      src={product.image} 
+                      alt={product.name} 
+                      className="product-image"
+                      style={imgStyle} 
+                    />
+                  )}
+                </div>
+
+                <h3 style={titleStyle}>{product.name}</h3>
+                <p style={descriptionStyle}>{product.description}</p>
+                <p style={priceStyle}>
+                  {text.price || 'السعر'}: 
+                  <span style={priceValueStyle}>${product.price}</span>
+                </p>
+
+                {expandedId === product._id && (
+                  <div style={detailContainerStyle}>
+                    <p style={detailStyle}>
+                      {text.category || 'الفئة'}: {product.category}
+                    </p>
+                  </div>
                 )}
-              </div>
 
-              <h3 style={titleStyle}>{product.name}</h3>
-              <p style={descriptionStyle}>{product.description}</p>
-              <p style={priceStyle}>{text.price || 'السعر'}: ${product.price}</p>
-
-              {expandedId === product._id && (
-                <p style={detailStyle}>{text.category || 'الفئة'}: {product.category}</p>
-              )}
-
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-                <button
-                  onClick={() => setExpandedId(expandedId === product._id ? null : product._id)}
-                  style={learnBtnStyle}
-                >
-                  {expandedId === product._id ? text.hideDetails || 'إخفاء' : text.learnMore || 'تفاصيل'}
-                </button>
-
-                {purchasedProducts.includes(product._id) ? (
-                  <button onClick={() => navigate(`/product/${product._id}`)} style={watchBtnStyle}>
-                    {text.watch || 'عرض'}
+                <div style={buttonGroupStyle}>
+                  <button
+                    onClick={() => setExpandedId(expandedId === product._id ? null : product._id)}
+                    className="btn btn-details"
+                    style={detailsBtnStyle}
+                  >
+                    {expandedId === product._id ? 
+                      (text.hideDetails || 'إخفاء') : 
+                      (text.learnMore || 'تفاصيل')
+                    }
                   </button>
-                ) : (
-                  <button onClick={() => handleBuyNow(product)} style={buyBtnStyle}>
-                    {text.buyNow || 'اشترِ الآن'}
-                  </button>
-                )}
+
+                  {purchasedProducts.includes(product._id) ? (
+                    <button 
+                      onClick={() => navigate(`/product/${product._id}`)} 
+                      className="btn btn-watch"
+                      style={watchBtnStyle}
+                    >
+                      {text.watch || 'عرض'}
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => handleBuyNow(product)} 
+                      className="btn btn-buy"
+                      style={buyBtnStyle}
+                    >
+                      {text.buyNow || 'اشترِ الآن'}
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
-// Styles
+// Brand-compliant styles using Valorem 2025 system
 const containerStyle = {
   position: 'relative',
-  padding: '3rem 2rem',
-  background: 'linear-gradient(135deg, #2c003e, #007bff)',
+  padding: '4rem 2rem',
+  background: `linear-gradient(135deg, var(--color-deep-violet, #4c1d95), var(--color-electric-blue, #3b82f6))`,
   minHeight: '100vh',
-  fontFamily: 'Nizzoli Rta, sans-serif',
+  fontFamily: `var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)`,
   overflow: 'hidden',
 };
 
@@ -130,104 +286,161 @@ const bgLogoStyle = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '70%',
-  opacity: 0.035,
+  width: '65%',
+  maxWidth: '700px',
+  opacity: 0.03,
   zIndex: 0,
+  pointerEvents: 'none',
+  filter: 'brightness(0) invert(1)',
 };
 
 const headingStyle = {
   textAlign: 'center',
-  color: '#00FFFF',
-  marginBottom: '2rem',
-  fontSize: '2.5rem',
-  fontFamily: 'Nizzoli Rta, sans-serif',
+  color: 'var(--color-white, #ffffff)',
+  marginBottom: '3rem',
+  fontSize: 'var(--font-size-4xl, 2.25rem)',
+  fontFamily: `var(--font-primary, 'Nizzoli Rta', 'Helvetica Neue', Arial, sans-serif)`,
+  fontWeight: 'var(--font-weight-bold, 700)',
+  letterSpacing: 'var(--letter-spacing-tight, -0.025em)',
+  zIndex: 1,
+  position: 'relative',
+  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+};
+
+const loadingStyle = {
+  textAlign: 'center',
+  color: 'var(--color-white, #ffffff)',
+  fontSize: 'var(--font-size-xl, 1.25rem)',
+  fontFamily: `var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)`,
   zIndex: 1,
   position: 'relative',
 };
 
 const gridStyle = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-  gap: '1.5rem',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+  gap: '2rem',
   zIndex: 1,
   position: 'relative',
+  maxWidth: '1200px',
+  margin: '0 auto',
 };
 
 const cardStyle = {
-  padding: '1.5rem',
-  borderRadius: '16px',
-  background: 'linear-gradient(135deg, rgba(255,255,255,0.15), rgba(200,200,255,0.1))',
-  backdropFilter: 'blur(8px)',
-  border: '1px solid rgba(255, 255, 255, 0.15)',
-  boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
-  color: '#fff',
-  transition: 'transform 0.3s ease',
+  padding: '2rem',
+  borderRadius: '1rem',
+  background: 'rgba(255, 255, 255, 0.1)',
+  backdropFilter: 'blur(20px)',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+  color: 'var(--color-white, #ffffff)',
 };
 
 const imagePlaceholder = {
-  height: '150px',
-  marginBottom: '1rem',
-  borderRadius: '8px',
+  height: '180px',
+  marginBottom: '1.5rem',
+  borderRadius: '0.5rem',
   overflow: 'hidden',
+  backgroundColor: 'rgba(255, 255, 255, 0.1)',
 };
 
 const imgStyle = {
   width: '100%',
   height: '100%',
   objectFit: 'cover',
-  borderRadius: '8px',
+  borderRadius: '0.5rem',
 };
 
 const titleStyle = {
-  fontSize: '20px',
-  fontWeight: 'bold',
-  marginBottom: '0.5rem',
-  fontFamily: 'Nizzoli Rta, sans-serif',
+  fontSize: 'var(--font-size-xl, 1.25rem)',
+  fontWeight: 'var(--font-weight-semibold, 600)',
+  marginBottom: '0.75rem',
+  fontFamily: `var(--font-primary, 'Nizzoli Rta', 'Helvetica Neue', Arial, sans-serif)`,
+  color: 'var(--color-white, #ffffff)',
+  lineHeight: 'var(--line-height-tight, 1.25)',
 };
 
 const descriptionStyle = {
-  fontSize: '14px',
-  color: '#e0e0e0',
-  fontFamily: 'Aktiv Grotesk, sans-serif',
+  fontSize: 'var(--font-size-sm, 0.875rem)',
+  color: 'rgba(255, 255, 255, 0.8)',
+  fontFamily: `var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)`,
+  lineHeight: 'var(--line-height-normal, 1.5)',
+  marginBottom: '1rem',
 };
 
 const priceStyle = {
-  fontSize: '16px',
-  color: '#00FFFF',
-  fontWeight: 'bold',
+  fontSize: 'var(--font-size-base, 1rem)',
+  color: 'var(--color-white, #ffffff)',
+  fontWeight: 'var(--font-weight-medium, 500)',
+  marginBottom: '1rem',
+  fontFamily: `var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)`,
+};
+
+const priceValueStyle = {
+  color: 'var(--color-bright-cyan, #06b6d4)',
+  fontWeight: 'var(--font-weight-bold, 700)',
+  fontSize: 'var(--font-size-lg, 1.125rem)',
+  marginLeft: '0.5rem',
+};
+
+const detailContainerStyle = {
+  marginTop: '1rem',
+  padding: '1rem',
+  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  borderRadius: '0.5rem',
+  borderLeft: '3px solid var(--color-neo-mint, #10b981)',
 };
 
 const detailStyle = {
-  fontSize: '13px',
+  fontSize: 'var(--font-size-sm, 0.875rem)',
   fontStyle: 'italic',
-  color: '#aaf',
+  color: 'var(--color-neo-mint, #10b981)',
+  margin: 0,
+  fontFamily: `var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)`,
+};
+
+const buttonGroupStyle = {
+  display: 'flex',
+  gap: '0.75rem',
+  marginTop: '1.5rem',
+  flexWrap: 'wrap',
 };
 
 const btnStyleBase = {
-  padding: '0.5rem 1rem',
+  padding: '0.75rem 1.5rem',
   border: 'none',
-  borderRadius: '6px',
+  borderRadius: '0.5rem',
   cursor: 'pointer',
-  fontWeight: 'bold',
-  fontFamily: 'Aktiv Grotesk, sans-serif',
+  fontSize: 'var(--font-size-sm, 0.875rem)',
+  fontFamily: `var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)`,
+  fontWeight: 'var(--font-weight-medium, 500)',
+  textTransform: 'uppercase',
+  letterSpacing: 'var(--letter-spacing-wide, 0.025em)',
+  flex: '1',
+  minWidth: '120px',
 };
 
-const learnBtnStyle = {
+const detailsBtnStyle = {
   ...btnStyleBase,
-  backgroundColor: '#17a2b8',
-  color: '#fff',
+  backgroundColor: 'var(--color-electric-blue, #3b82f6)',
+  color: 'var(--color-white, #ffffff)',
+  boxShadow: '0 4px 15px rgba(59, 130, 246, 0.2)',
 };
 
 const buyBtnStyle = {
   ...btnStyleBase,
-  backgroundColor: '#28a745',
-  color: '#fff',
+  backgroundColor: 'var(--color-neo-mint, #10b981)',
+  color: 'var(--color-white, #ffffff)',
+  boxShadow: '0 4px 15px rgba(16, 185, 129, 0.2)',
 };
 
 const watchBtnStyle = {
   ...btnStyleBase,
-  backgroundColor: '#ffc107',
-  color: '#000',
+  backgroundColor: 'transparent',
+  color: 'var(--color-deep-violet, #4c1d95)',
+  border: '2px solid var(--color-deep-violet, #4c1d95)',
+  backgroundColor: 'var(--color-white, #ffffff)',
+  boxShadow: '0 4px 15px rgba(76, 29, 149, 0.1)',
 };
 
 export default Products;
