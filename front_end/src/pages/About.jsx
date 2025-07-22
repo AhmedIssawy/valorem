@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from '../assets/logo-full.png'; // تأكد من المسار
+import { useNavigate } from 'react-router-dom';
 
 function About() {
+  const [hovered, setHovered] = useState({ title: false, button: false });
+    const navigate = useNavigate();
+
   return (
     <>
       {/* Brand-compliant CSS styles */}
@@ -12,12 +16,7 @@ function About() {
         
         .title {
           font-family: var(--font-primary, 'Nizzoli Rta', 'Helvetica Neue', Arial, sans-serif);
-          transition: transform 0.3s ease, color 0.3s ease;
-        }
-        
-        .title:hover {
-          transform: scale(1.05);
-          color: var(--color-neo-mint, #10b981);
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .paragraph {
@@ -40,16 +39,10 @@ function About() {
         
         .cta-button {
           font-family: var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif);
-          transition: all 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           animation: fadeInUp 0.6s ease-out 0.8s;
           opacity: 0;
           animation-fill-mode: forwards;
-        }
-        
-        .cta-button:hover {
-          background-color: var(--color-deep-violet-dark, #3730a3) !important;
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(76, 29, 149, 0.3);
         }
         
         @keyframes fadeInUp {
@@ -63,120 +56,250 @@ function About() {
           }
         }
         
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 0.4; transform: scaleX(1); }
+          50% { opacity: 1; transform: scaleX(1.1); }
+        }
+        
         /* Responsive adjustments */
         @media (max-width: 768px) {
           .title {
-            font-size: 2rem !important; /* --font-size-4xl mobile */
+            font-size: 2.5rem !important;
           }
           
           .paragraph {
-            font-size: 1.125rem !important; /* --font-size-lg mobile */
-            max-width: 90% !important;
+            font-size: 1.1rem !important;
+          }
+          
+          .content-container {
+            padding: 2rem !important;
+            margin: 1rem !important;
           }
         }
       `}</style>
       
       <div className="about-container" style={aboutPageStyle}>
-        <img src={logo} alt="Background Logo" style={bgLogoStyle} />
+        {/* Background Logo - Same as Home */}
+        <img src={logo} alt="Valorem Logo" style={backgroundLogoStyle} />
         
-        <h1 className="title" style={titleStyle}>
-          About This Platform
-        </h1>
-        
-        <p className="paragraph" style={paragraphStyle}>
-          Our educational platform is designed to empower both students and administrators 
-          with cutting-edge learning technologies.
-        </p>
-        
-        <p className="paragraph" style={paragraphStyle}>
-          Students can explore interactive courses, track their learning progress, 
-          and engage with a vibrant collaborative community.
-        </p>
-        
-        <p className="paragraph" style={paragraphStyle}>
-          Administrators can efficiently manage educational content, monitor user activity, 
-          and provide comprehensive support through our powerful management tools.
-        </p>
-        
-        <button className="cta-button" style={buttonStyle}>
-          Start Your Journey
-        </button>
+        {/* Floating Shapes - Same as Home */}
+        <div style={shape1Style}></div>
+        <div style={shape2Style}></div>
+        <div style={shape3Style}></div>
+
+        {/* Main Content Container - Same styling as Home */}
+        <div className="content-container" style={contentContainerStyle}>
+          <h1 
+            className="title" 
+            style={{
+              ...titleStyle,
+              ...(hovered.title ? titleHoverStyle : {})
+            }}
+            onMouseEnter={() => setHovered({ ...hovered, title: true })}
+            onMouseLeave={() => setHovered({ ...hovered, title: false })}
+          >
+            About This Platform
+          </h1>
+          
+          <p className="paragraph" style={paragraphStyle}>
+            Our educational platform is designed to empower both students and administrators 
+            with cutting-edge learning technologies.
+          </p>
+          
+          <p className="paragraph" style={paragraphStyle}>
+            Students can explore interactive courses, track their learning progress, 
+            and engage with a vibrant collaborative community.
+          </p>
+          
+          <p className="paragraph" style={paragraphStyle}>
+            Administrators can efficiently manage educational content, monitor user activity, 
+            and provide comprehensive support through our powerful management tools.
+          </p>
+          
+          <button 
+            className="cta-button" 
+            style={{
+              ...buttonStyle,
+              ...(hovered.button ? ctaButtonHoverStyle : {})
+            }}
+            onClick={() => navigate('/courses')}
+            onMouseEnter={() => setHovered({ ...hovered, button: true })}
+            onMouseLeave={() => setHovered({ ...hovered, button: false })}
+          >
+            Start Your Journey
+          </button>
+        </div>
+
+        {/* Animated Gradient Line - Same as Home */}
+        <div style={gradientLineStyle}></div>
       </div>
     </>
   );
 }
 
-// Brand-compliant styles using Valorem 2025 color system
+// ========== STYLES - Updated to match Home ==========
 const aboutPageStyle = {
   position: 'relative',
-  background: `linear-gradient(135deg, var(--color-deep-violet, #4c1d95), var(--color-electric-blue, #3b82f6))`,
-  minHeight: '100vh',
-  padding: '4rem 2rem',
+  height: '100vh',
+  background: `
+    linear-gradient(135deg, 
+      #4c1d95 0%,    /* Deep Violet */
+      #3730a3 25%,   /* Deep Violet Dark */
+      #3b82f6 50%,   /* Electric Blue */
+      #06b6d4 75%,   /* Bright Cyan */
+      #10b981 100%   /* Neo Mint */
+    )
+  `,
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  fontFamily: `var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)`,
-  textAlign: 'center',
+  padding: '2rem',
   overflow: 'hidden',
+  fontFamily: `var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)`,
 };
 
-const bgLogoStyle = {
+const backgroundLogoStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '70%',
-  maxWidth: '600px',
-  opacity: 0.04,
+  width: '60%',
+  maxWidth: '800px',
+  opacity: 0.03,
   zIndex: 0,
-  pointerEvents: 'none',
-  filter: 'brightness(0) invert(1)', // Makes logo white for better visibility
+  filter: 'blur(1px)',
+};
+
+const contentContainerStyle = {
+  zIndex: 10,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  textAlign: 'center',
+  maxWidth: '900px',
+  backdropFilter: 'blur(10px)',
+  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+  padding: '3rem',
+  borderRadius: '24px',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
 };
 
 const titleStyle = {
-  fontSize: 'var(--font-size-5xl, 3rem)', // 48px
-  fontWeight: 'var(--font-weight-bold, 700)',
-  color: 'var(--color-white, #ffffff)',
-  marginBottom: '3rem',
-  fontFamily: `var(--font-primary, 'Nizzoli Rta', 'Helvetica Neue', Arial, sans-serif)`,
-  zIndex: 1,
-  position: 'relative',
-  cursor: 'pointer',
-  letterSpacing: 'var(--letter-spacing-tight, -0.025em)',
-  lineHeight: 'var(--line-height-tight, 1.25)',
-  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+  fontSize: '4.5rem',        // Using --font-size-6xl equivalent
+  fontFamily: "'Nizzoli Rta', 'Helvetica Neue', Arial, sans-serif", // Primary font
+  fontWeight: 700,           // Bold
+  color: '#ffffff',
+  marginBottom: '1.5rem',
+  letterSpacing: '-0.025em', // Tight letter spacing
+  lineHeight: 1.25,          // Tight line height
+  textShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+  cursor: 'default',
+};
+
+const titleHoverStyle = {
+  transform: 'scale(1.02) translateY(-5px)',
+  color: '#10b981',          // Neo Mint on hover
+  textShadow: '0 8px 30px rgba(16, 185, 129, 0.4)',
 };
 
 const paragraphStyle = {
-  fontSize: 'var(--font-size-lg, 1.125rem)', // 18px
+  fontSize: '1.25rem',       // --font-size-xl
+  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif", // Secondary font
+  fontWeight: 400,           // Regular
   color: 'rgba(255, 255, 255, 0.9)',
-  fontFamily: `var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)`,
-  fontWeight: 'var(--font-weight-regular, 400)',
+  lineHeight: 1.75,          // Relaxed line height
   marginBottom: '1.5rem',
-  maxWidth: '800px',
-  lineHeight: 'var(--line-height-relaxed, 1.75)',
-  zIndex: 1,
-  position: 'relative',
-  textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+  maxWidth: '700px',
+  textShadow: '0 2px 15px rgba(255, 255, 255, 0.1)',
 };
 
 const buttonStyle = {
-  marginTop: '2rem',
-  padding: '1rem 2rem',
-  fontSize: 'var(--font-size-base, 1rem)',
-  fontWeight: 'var(--font-weight-medium, 500)',
-  color: 'var(--color-white, #ffffff)',
-  backgroundColor: 'var(--color-deep-violet, #4c1d95)',
-  border: '2px solid var(--color-bright-cyan, #06b6d4)',
-  borderRadius: '0.75rem',
+  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif", // Secondary font
+  fontSize: '1.125rem',      // --font-size-lg
+  fontWeight: 600,           // Semibold
+  padding: '1rem 2.5rem',
+  borderRadius: '50px',
+  backgroundColor: '#10b981', // Neo Mint
+  color: '#ffffff',
+  border: '2px solid #10b981',
   cursor: 'pointer',
-  fontFamily: `var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)`,
-  zIndex: 1,
-  position: 'relative',
-  boxShadow: '0 4px 15px rgba(76, 29, 149, 0.2)',
   textTransform: 'uppercase',
-  letterSpacing: 'var(--letter-spacing-wide, 0.025em)',
+  letterSpacing: '0.05em',   // Wider letter spacing
+  boxShadow: '0 10px 25px rgba(16, 185, 129, 0.3)',
+  position: 'relative',
+  overflow: 'hidden',
+  marginTop: '2rem',
+};
+
+const ctaButtonHoverStyle = {
+  transform: 'translateY(-3px) scale(1.05)',
+  backgroundColor: '#059669', // Neo Mint Dark
+  borderColor: '#059669',
+  boxShadow: '0 15px 35px rgba(16, 185, 129, 0.4)',
+};
+
+const gradientLineStyle = {
+  position: 'absolute',
+  bottom: '5%',
+  left: '10%',
+  right: '10%',
+  height: '2px',
+  background: `
+    linear-gradient(90deg, 
+      #4c1d95 0%,    /* Deep Violet */
+      #3b82f6 50%,   /* Electric Blue */
+      #10b981 100%   /* Neo Mint */
+    )
+  `,
+  borderRadius: '2px',
+  animation: 'pulse 3s ease-in-out infinite',
+};
+
+// Floating Shapes - Same as Home
+const shape1Style = {
+  position: 'absolute',
+  top: '15%',
+  left: '10%',
+  width: '100px',
+  height: '100px',
+  backgroundColor: 'rgba(16, 185, 129, 0.1)', // Neo Mint with opacity
+  borderRadius: '50%',
+  filter: 'blur(40px)',
+  animation: 'float 6s ease-in-out infinite',
+  zIndex: 1,
+};
+
+const shape2Style = {
+  position: 'absolute',
+  top: '70%',
+  right: '15%',
+  width: '150px',
+  height: '150px',
+  backgroundColor: 'rgba(59, 130, 246, 0.1)', // Electric Blue with opacity
+  borderRadius: '50%',
+  filter: 'blur(50px)',
+  animation: 'float 8s ease-in-out infinite reverse',
+  zIndex: 1,
+};
+
+const shape3Style = {
+  position: 'absolute',
+  top: '40%',
+  right: '5%',
+  width: '80px',
+  height: '80px',
+  backgroundColor: 'rgba(6, 182, 212, 0.1)', // Bright Cyan with opacity
+  borderRadius: '50%',
+  filter: 'blur(30px)',
+  animation: 'float 7s ease-in-out infinite',
+  zIndex: 1,
 };
 
 export default About;
