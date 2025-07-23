@@ -288,7 +288,7 @@ function SocialIcon() {
             
             <div className="valorem-social-links">
               <a 
-                href="https://www.instagram.com/bmbozya_designes?igsh=MWxzbGY0ajRscm8zYw==" 
+                href="https://www.instagram.com/valorem_.agency/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="valorem-social-link"
@@ -310,7 +310,7 @@ function SocialIcon() {
               </a>
               
               <a 
-                href="https://www.facebook.com/share/15d2Kobc1A/" 
+                href="https://www.facebook.com/profile.php?id=61578294608916" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="valorem-social-link"

@@ -107,20 +107,22 @@ function About() {
           </h1>
           
           <p className="paragraph" style={paragraphStyle}>
-            Our educational platform is designed to empower both students and administrators 
-            with cutting-edge learning technologies.
-          </p>
-          
-          <p className="paragraph" style={paragraphStyle}>
-            Students can explore interactive courses, track their learning progress, 
-            and engage with a vibrant collaborative community.
-          </p>
-          
-          <p className="paragraph" style={paragraphStyle}>
-            Administrators can efficiently manage educational content, monitor user activity, 
-            and provide comprehensive support through our powerful management tools.
-          </p>
-          
+  Valorem is a next-generation, AI-powered marketing agency redefining cinematic advertising.
+</p>
+
+<p className="paragraph" style={paragraphStyle}>
+  We craft visually stunning, emotionally resonant campaigns using the latest in generative AI technology — from initial concept to final execution.
+</p>
+
+<p className="paragraph" style={paragraphStyle}>
+  Valorem blends innovation with storytelling to captivate audiences and drive meaningful results.
+  Our mission is to reshape brand communication through intelligent, cinematic creativity.
+</p>
+
+<p className="paragraph" style={paragraphStyle}>
+  In addition to our agency services, we offer industry-leading courses designed to empower aspiring creatives with the skills and tools to master AI-driven advertising — from beginner to expert level.
+</p>
+
           <button 
             className="cta-button" 
             style={{

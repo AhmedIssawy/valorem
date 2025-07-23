@@ -11,6 +11,11 @@ function Products() {
   const [expandedId, setExpandedId] = useState(null);
   const [purchasedProducts, setPurchasedProducts] = useState([]);
   const [hovered, setHovered] = useState({ title: false });
+  const [couponCode, setCouponCode] = useState('');
+  const [showCustomPaymentModal, setShowCustomPaymentModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,27 +51,364 @@ function Products() {
   }, []);
 
   const handleBuyNow = async (course) => {
+    setSelectedProduct(course);
+    setShowCustomPaymentModal(true);
+  };
+
+  const handleDirectPurchase = async () => {
+    if (!selectedProduct) return;
+    
+    setPaymentLoading(true);
     try {
-      const res = await axiosWithToken.post(`/courses/${course._id}/place`, {
+      const res = await axiosWithToken.post(`/courses/${selectedProduct._id}/place`, {
         paymentMethod: "credit_card",
       });
-      setPurchasedProducts((prev) => [...prev, course._id]);
+      setPurchasedProducts((prev) => [...prev, selectedProduct._id]);
+      alert('تم شراء الكورس بنجاح! 🎉');
+      closePaymentModal();
     } catch (err) {
       if (err.response?.status === 409) {
         alert("لقد اشتريت هذا المنتج مسبقًا.");
-        setPurchasedProducts((prev) => [...prev, course._id]);
+        setPurchasedProducts((prev) => [...prev, selectedProduct._id]);
+        closePaymentModal();
       } else if (err.response?.status === 401) {
         alert("انتهت الجلسة. يرجى تسجيل الدخول.");
         navigate("/login");
       } else {
         alert("حدث خطأ أثناء تنفيذ الطلب");
       }
+    } finally {
+      setPaymentLoading(false);
     }
+  };
+
+  const handleCouponRedeem = async () => {
+    if (!couponCode.trim()) {
+      alert('يرجى إدخال كود الكوبون');
+      return;
+    }
+
+    setCouponLoading(true);
+    try {
+      const res = await axiosWithToken.post('/coupons/redeem', {
+        code: couponCode.trim()
+      });
+      
+      // إضافة المنتج إلى قائمة المنتجات المشتراة
+      if (selectedProduct) {
+        setPurchasedProducts((prev) => [...prev, selectedProduct._id]);
+      }
+      
+      alert('تم استخدام الكوبون بنجاح! 🎉');
+      closePaymentModal();
+    } catch (err) {
+      if (err.response?.status === 404) {
+        alert('كود الكوبون غير صحيح');
+      } else if (err.response?.status === 400) {
+        alert(err.response.data.message || 'لا يمكن استخدام هذا الكوبون');
+      } else {
+        alert('حدث خطأ أثناء استخدام الكوبون');
+      }
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const closePaymentModal = () => {
+    setShowCustomPaymentModal(false);
+    setCouponCode('');
+    setSelectedProduct(null);
+    setPaymentLoading(false);
+    setCouponLoading(false);
+  };
+
+  // Styles with enhanced branding and animations
+  const containerStyle = {
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    position: 'relative',
+    overflow: 'hidden',
+    padding: '80px 20px 20px',
+    fontFamily: "var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)"
+  };
+
+  const backgroundLogoStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '60%',
+    height: 'auto',
+    opacity: 0.03,
+    zIndex: 1,
+    userSelect: 'none',
+    pointerEvents: 'none'
+  };
+
+  const contentContainerStyle = {
+    position: 'relative',
+    zIndex: 10,
+    maxWidth: '1200px',
+    margin: '0 auto'
+  };
+
+  const headingStyle = {
+    fontSize: '3rem',
+    color: 'white',
+    textAlign: 'center',
+    marginBottom: '3rem',
+    fontWeight: 'bold',
+    textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+    cursor: 'pointer',
+    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    fontFamily: "var(--font-primary, 'Nizzoli Rta', 'Helvetica Neue', Arial, sans-serif)"
+  };
+
+  const titleHoverStyle = {
+    transform: 'scale(1.05)',
+    textShadow: '4px 4px 8px rgba(0,0,0,0.5)'
+  };
+
+  const loadingStyle = {
+    fontSize: '1.5rem',
+    color: 'white',
+    textAlign: 'center',
+    marginTop: '2rem'
+  };
+
+  const gridStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gap: '2rem',
+    padding: '1rem'
+  };
+
+  const cardStyle = {
+    background: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: '20px',
+    padding: '1.5rem',
+    boxShadow: '0 8px 32px rgba(31, 38, 135, 0.37)',
+    backdropFilter: 'blur(8px)',
+    border: '1px solid rgba(255, 255, 255, 0.18)',
+    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    transformOrigin: 'center'
+  };
+
+  const imagePlaceholder = {
+    width: '100%',
+    height: '200px',
+    backgroundColor: '#f0f0f0',
+    borderRadius: '15px',
+    marginBottom: '1rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden'
+  };
+
+  const imgStyle = {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    borderRadius: '15px',
+    transition: 'transform 0.3s ease'
+  };
+
+  const titleStyle = {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: '0.5rem'
+  };
+
+  const descriptionStyle = {
+    color: '#666',
+    marginBottom: '1rem',
+    lineHeight: '1.5'
+  };
+
+  const priceStyle = {
+    fontSize: '1.1rem',
+    fontWeight: 'bold',
+    color: '#444',
+    marginBottom: '1rem'
+  };
+
+  const priceValueStyle = {
+    color: '#667eea',
+    marginLeft: '0.5rem'
+  };
+
+  const detailContainerStyle = {
+    background: 'rgba(102, 126, 234, 0.1)',
+    padding: '1rem',
+    borderRadius: '10px',
+    marginBottom: '1rem'
+  };
+
+  const detailStyle = {
+    color: '#555',
+    margin: 0
+  };
+
+  const buttonGroupStyle = {
+    display: 'flex',
+    gap: '0.5rem',
+    flexWrap: 'wrap'
+  };
+
+  const baseButtonStyle = {
+    padding: '0.75rem 1.5rem',
+    border: 'none',
+    borderRadius: '25px',
+    cursor: 'pointer',
+    fontSize: '0.9rem',
+    fontWeight: 'var(--font-weight-medium, 500)',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    flex: 1,
+    minWidth: '120px',
+    textTransform: 'uppercase',
+    letterSpacing: 'var(--letter-spacing-wide, 0.025em)',
+    fontFamily: "var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)"
+  };
+
+  const detailsBtnStyle = {
+    ...baseButtonStyle,
+    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    color: 'white'
+  };
+
+  const buyBtnStyle = {
+    ...baseButtonStyle,
+    background: 'linear-gradient(45deg, #4CAF50, #45a049)',
+    color: 'white'
+  };
+
+  const watchBtnStyle = {
+    ...baseButtonStyle,
+    background: 'linear-gradient(45deg, #2196F3, #21CBF3)',
+    color: 'white'
+  };
+
+  const modalOverlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    backdropFilter: 'blur(5px)'
+  };
+
+  const modalContentStyle = {
+    background: 'white',
+    padding: '2.5rem',
+    borderRadius: '25px',
+    maxWidth: '500px',
+    width: '90%',
+    textAlign: 'center',
+    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+    transform: 'scale(0.9)',
+    animation: 'modalAppear 0.3s ease-out forwards'
+  };
+
+  const modalTitleStyle = {
+    fontSize: '1.8rem',
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: '1rem',
+    fontFamily: "var(--font-primary, 'Nizzoli Rta', 'Helvetica Neue', Arial, sans-serif)"
+  };
+
+  const modalProductInfoStyle = {
+    background: 'rgba(102, 126, 234, 0.1)',
+    padding: '1rem',
+    borderRadius: '15px',
+    marginBottom: '2rem'
+  };
+
+  const paymentOptionsStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem'
+  };
+
+  const paymentSectionStyle = {
+    background: 'rgba(248, 250, 252, 0.8)',
+    padding: '1.5rem',
+    borderRadius: '15px',
+    border: '2px solid transparent',
+    transition: 'all 0.3s ease'
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '1rem',
+    border: '2px solid #ddd',
+    borderRadius: '10px',
+    fontSize: '1rem',
+    marginBottom: '1rem',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    transition: 'all 0.3s ease'
+  };
+
+  const modalButtonStyle = {
+    ...baseButtonStyle,
+    marginRight: '0.5rem',
+    minWidth: '140px'
+  };
+
+  const shape1Style = {
+    position: 'absolute',
+    top: '10%',
+    left: '10%',
+    width: '200px',
+    height: '200px',
+    background: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '50%',
+    animation: 'float 6s ease-in-out infinite'
+  };
+
+  const shape2Style = {
+    position: 'absolute',
+    top: '60%',
+    right: '15%',
+    width: '150px',
+    height: '150px',
+    background: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: '50%',
+    animation: 'float 4s ease-in-out infinite reverse'
+  };
+
+  const shape3Style = {
+    position: 'absolute',
+    bottom: '20%',
+    left: '20%',
+    width: '100px',
+    height: '100px',
+    background: 'rgba(255, 255, 255, 0.06)',
+    borderRadius: '50%',
+    animation: 'float 5s ease-in-out infinite'
+  };
+
+  const gradientLineStyle = {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '4px',
+    background: 'linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57)',
+    backgroundSize: '300% 300%',
+    animation: 'gradientShift 3s ease infinite'
   };
 
   return (
     <>
-      {/* Brand-compliant CSS styles */}
       <style jsx>{`
         .products-container {
           font-family: var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif);
@@ -124,23 +466,34 @@ function Products() {
         }
         
         .btn-details:hover {
-          background-color: var(--color-electric-blue-dark, #2563eb) !important;
+          background: var(--color-electric-blue-dark, #2563eb) !important;
           box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
         }
         
         .btn-buy:hover {
-          background-color: var(--color-neo-mint-dark, #059669) !important;
+          background: var(--color-neo-mint-dark, #059669) !important;
           box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
         }
         
         .btn-watch:hover {
-          background-color: var(--color-deep-violet-dark, #3730a3) !important;
+          background: var(--color-deep-violet-dark, #3730a3) !important;
           color: var(--color-white, #ffffff) !important;
           box-shadow: 0 6px 20px rgba(76, 29, 149, 0.3);
         }
         
         .loading-text {
           animation: pulse 2s infinite;
+        }
+        
+        .payment-section:hover {
+          border-color: #667eea !important;
+          background: rgba(102, 126, 234, 0.05) !important;
+        }
+        
+        input:focus {
+          border-color: #667eea !important;
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
         @keyframes float {
@@ -186,6 +539,23 @@ function Products() {
           }
         }
         
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes modalAppear {
+          from {
+            opacity: 0;
+            transform: scale(0.8);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        
         /* Responsive design */
         @media (max-width: 768px) {
           .products-heading {
@@ -200,14 +570,19 @@ function Products() {
             padding: 2rem !important;
             margin: 1rem !important;
           }
+          
+          .modal-content {
+            padding: 2rem !important;
+            margin: 1rem !important;
+          }
         }
       `}</style>
       
       <div className="products-container" style={containerStyle}>
-        {/* Background Logo - Same as Home */}
+        {/* Background Logo */}
         <img src={logo} alt="Valorem Logo" style={backgroundLogoStyle} />
         
-        {/* Floating Shapes - Same as Home */}
+        {/* Floating Shapes */}
         <div style={shape1Style}></div>
         <div style={shape2Style}></div>
         <div style={shape3Style}></div>
@@ -223,7 +598,7 @@ function Products() {
             onMouseEnter={() => setHovered({ ...hovered, title: true })}
             onMouseLeave={() => setHovered({ ...hovered, title: false })}
           >
-            {text.availableProducts || 'Available Courses'}
+            {text.availableProducts || 'الكورسات المتاحة'}
           </h2>
 
           {loading ? (
@@ -296,270 +671,91 @@ function Products() {
           )}
         </div>
 
-        {/* Animated Gradient Line - Same as Home */}
+        {/* Enhanced Payment Modal */}
+        {showCustomPaymentModal && selectedProduct && (
+          <div style={modalOverlayStyle} onClick={closePaymentModal}>
+            <div className="modal-content" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+              <h3 style={modalTitleStyle}>شراء الكورس</h3>
+              
+              <div style={modalProductInfoStyle}>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: '#333' }}>{selectedProduct.name}</h4>
+                <p style={{ margin: 0, color: '#666', fontSize: '1.1rem', fontWeight: 'bold' }}>
+                  السعر: <span style={{ color: '#667eea' }}>${selectedProduct.price}</span>
+                </p>
+              </div>
+
+              <div style={paymentOptionsStyle}>
+                {/* Direct Payment Section */}
+                <div className="payment-section" style={paymentSectionStyle}>
+                  <h4 style={{ margin: '0 0 1rem 0', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    💳 الدفع المباشر
+                  </h4>
+                  <button
+                    onClick={handleDirectPurchase}
+                    disabled={paymentLoading}
+                    style={{
+                      ...modalButtonStyle,
+                      background: paymentLoading ? '#ccc' : 'linear-gradient(45deg, #4CAF50, #45a049)',
+                      color: 'white',
+                      width: '100%'
+                    }}
+                  >
+                    {paymentLoading ? 'جاري المعالجة...' : `ادفع $${selectedProduct.price}`}
+                  </button>
+                </div>
+
+                {/* Coupon Section */}
+                <div className="payment-section" style={paymentSectionStyle}>
+                  <h4 style={{ margin: '0 0 1rem 0', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    🎟️ استخدام كوبون
+                  </h4>
+                  <p style={{ margin: '0 0 1rem 0', color: '#666', fontSize: '0.9rem' }}>
+                    احصل على الكورس مجاناً باستخدام كود الكوبون
+                  </p>
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    placeholder="أدخل كود الكوبون"
+                    style={inputStyle}
+                    disabled={couponLoading}
+                  />
+                  <button
+                    onClick={handleCouponRedeem}
+                    disabled={couponLoading || !couponCode.trim()}
+                    style={{
+                      ...modalButtonStyle,
+                      background: (couponLoading || !couponCode.trim()) ? '#ccc' : 'linear-gradient(45deg, #FF6B6B, #FF8E53)',
+                      color: 'white',
+                      width: '100%'
+                    }}
+                  >
+                    {couponLoading ? 'جاري التحقق...' : 'استخدام الكوبون'}
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '2rem' }}>
+                <button
+                  onClick={closePaymentModal}
+                  style={{
+                    ...modalButtonStyle,
+                    background: 'linear-gradient(45deg, #6c757d, #5a6268)',
+                    color: 'white'
+                  }}
+                >
+                  إلغاء
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Animated Gradient Line */}
         <div style={gradientLineStyle}></div>
       </div>
     </>
   );
 }
-
-// ========== STYLES - Updated to match Home ==========
-const containerStyle = {
-  position: 'relative',
-  minHeight: '100vh',
-  background: `
-    linear-gradient(135deg, 
-      #4c1d95 0%,    /* Deep Violet */
-      #3730a3 25%,   /* Deep Violet Dark */
-      #3b82f6 50%,   /* Electric Blue */
-      #06b6d4 75%,   /* Bright Cyan */
-      #10b981 100%   /* Neo Mint */
-    )
-  `,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: '2rem',
-  overflow: 'hidden',
-  fontFamily: `var(--font-secondary, 'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif)`,
-};
-
-const backgroundLogoStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '60%',
-  maxWidth: '800px',
-  opacity: 0.03,
-  zIndex: 0,
-  filter: 'blur(1px)',
-};
-
-const contentContainerStyle = {
-  zIndex: 10,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  width: '100%',
-  maxWidth: '1400px',
-  backdropFilter: 'blur(10px)',
-  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-  padding: '3rem',
-  borderRadius: '24px',
-  border: '1px solid rgba(255, 255, 255, 0.2)',
-  boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
-  margin: '2rem 0',
-};
-
-const headingStyle = {
-  textAlign: 'center',
-  color: '#ffffff',
-  marginBottom: '3rem',
-  fontSize: '4rem',        // Using --font-size-6xl equivalent
-  fontFamily: "'Nizzoli Rta', 'Helvetica Neue', Arial, sans-serif", // Primary font
-  fontWeight: 700,         // Bold
-  letterSpacing: '-0.025em', // Tight letter spacing
-  lineHeight: 1.25,        // Tight line height
-  textShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
-  cursor: 'default',
-};
-
-const titleHoverStyle = {
-  transform: 'scale(1.02) translateY(-5px)',
-  color: '#10b981',          // Neo Mint on hover
-  textShadow: '0 8px 30px rgba(16, 185, 129, 0.4)',
-};
-
-const loadingStyle = {
-  textAlign: 'center',
-  color: '#ffffff',
-  fontSize: '1.25rem',       // --font-size-xl
-  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif", // Secondary font
-  fontWeight: 400,           // Regular
-  lineHeight: 1.75,          // Relaxed line height
-  textShadow: '0 2px 15px rgba(255, 255, 255, 0.1)',
-};
-
-const gridStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-  gap: '2rem',
-  width: '100%',
-};
-
-const cardStyle = {
-  padding: '2rem',
-  borderRadius: '1rem',
-  background: 'rgba(255, 255, 255, 0.1)',
-  backdropFilter: 'blur(20px)',
-  border: '1px solid rgba(255, 255, 255, 0.2)',
-  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-  color: '#ffffff',
-};
-
-const imagePlaceholder = {
-  height: '180px',
-  marginBottom: '1.5rem',
-  borderRadius: '0.5rem',
-  overflow: 'hidden',
-  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-};
-
-const imgStyle = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  borderRadius: '0.5rem',
-};
-
-const titleStyle = {
-  fontSize: '1.25rem',
-  fontWeight: 600,
-  marginBottom: '0.75rem',
-  fontFamily: "'Nizzoli Rta', 'Helvetica Neue', Arial, sans-serif",
-  color: '#ffffff',
-  lineHeight: 1.25,
-};
-
-const descriptionStyle = {
-  fontSize: '0.875rem',
-  color: 'rgba(255, 255, 255, 0.8)',
-  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif",
-  lineHeight: 1.5,
-  marginBottom: '1rem',
-};
-
-const priceStyle = {
-  fontSize: '1rem',
-  color: '#ffffff',
-  fontWeight: 500,
-  marginBottom: '1rem',
-  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif",
-};
-
-const priceValueStyle = {
-  color: '#06b6d4',
-  fontWeight: 700,
-  fontSize: '1.125rem',
-  marginLeft: '0.5rem',
-};
-
-const detailContainerStyle = {
-  marginTop: '1rem',
-  padding: '1rem',
-  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  borderRadius: '0.5rem',
-  borderLeft: '3px solid #10b981',
-};
-
-const detailStyle = {
-  fontSize: '0.875rem',
-  fontStyle: 'italic',
-  color: '#10b981',
-  margin: 0,
-  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif",
-};
-
-const buttonGroupStyle = {
-  display: 'flex',
-  gap: '0.75rem',
-  marginTop: '1.5rem',
-  flexWrap: 'wrap',
-};
-
-const btnStyleBase = {
-  padding: '0.75rem 1.5rem',
-  border: 'none',
-  borderRadius: '0.5rem',
-  cursor: 'pointer',
-  fontSize: '0.875rem',
-  fontFamily: "'Aktiv Grotesk', 'Inter', 'Segoe UI', sans-serif",
-  fontWeight: 500,
-  textTransform: 'uppercase',
-  letterSpacing: '0.025em',
-  flex: '1',
-  minWidth: '120px',
-};
-
-const detailsBtnStyle = {
-  ...btnStyleBase,
-  backgroundColor: '#3b82f6',
-  color: '#ffffff',
-  boxShadow: '0 4px 15px rgba(59, 130, 246, 0.2)',
-};
-
-const buyBtnStyle = {
-  ...btnStyleBase,
-  backgroundColor: '#10b981',
-  color: '#ffffff',
-  boxShadow: '0 4px 15px rgba(16, 185, 129, 0.2)',
-};
-
-const watchBtnStyle = {
-  ...btnStyleBase,
-  backgroundColor: '#ffffff',
-  color: '#4c1d95',
-  border: '2px solid #4c1d95',
-  boxShadow: '0 4px 15px rgba(76, 29, 149, 0.1)',
-};
-
-const gradientLineStyle = {
-  position: 'absolute',
-  bottom: '5%',
-  left: '10%',
-  right: '10%',
-  height: '2px',
-  background: `
-    linear-gradient(90deg, 
-      #4c1d95 0%,    /* Deep Violet */
-      #3b82f6 50%,   /* Electric Blue */
-      #10b981 100%   /* Neo Mint */
-    )
-  `,
-  borderRadius: '2px',
-  animation: 'pulse 3s ease-in-out infinite',
-};
-
-// Floating Shapes - Same as Home
-const shape1Style = {
-  position: 'absolute',
-  top: '15%',
-  left: '10%',
-  width: '100px',
-  height: '100px',
-  backgroundColor: 'rgba(16, 185, 129, 0.1)', // Neo Mint with opacity
-  borderRadius: '50%',
-  filter: 'blur(40px)',
-  animation: 'float 6s ease-in-out infinite',
-  zIndex: 1,
-};
-
-const shape2Style = {
-  position: 'absolute',
-  top: '70%',
-  right: '15%',
-  width: '150px',
-  height: '150px',
-  backgroundColor: 'rgba(59, 130, 246, 0.1)', // Electric Blue with opacity
-  borderRadius: '50%',
-  filter: 'blur(50px)',
-  animation: 'float 8s ease-in-out infinite reverse',
-  zIndex: 1,
-};
-
-const shape3Style = {
-  position: 'absolute',
-  top: '40%',
-  right: '5%',
-  width: '80px',
-  height: '80px',
-  backgroundColor: 'rgba(6, 182, 212, 0.1)', // Bright Cyan with opacity
-  borderRadius: '50%',
-  filter: 'blur(30px)',
-  animation: 'float 7s ease-in-out infinite',
-  zIndex: 1,
-};
 
 export default Products;

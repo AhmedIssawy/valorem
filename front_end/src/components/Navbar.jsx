@@ -43,117 +43,131 @@ function Navbar() {
       </div>
 
       {/* Navigation Links */}
-      <ul style={{...navLinksStyle, direction: lang === 'ar' ? 'rtl' : 'ltr'}}>
-        {navItems.map((item, index) => (
-          <li key={item}>
-            <Link
-              to={`/${item === 'home' ? '' : item}`}
-              style={{
-                ...linkStyle,
-                ...(hovered === index ? linkHoverStyle : {})
-              }}
-              onMouseEnter={() => setHovered(index)}
-              onMouseLeave={() => setHovered(null)}
-            >
-              {text[item]}
-            </Link>
-          </li>
-        ))}
+   <ul style={{ ...navLinksStyle, direction: lang === 'ar' ? 'rtl' : 'ltr' }}>
+  {navItems.map((item, index) => (
+    <li key={item}>
+      {item === 'community' ? (
+        <a
+          href="https://www.facebook.com/share/g/12Lx8FtbRCj/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            ...linkStyle,
+            ...(hovered === index ? linkHoverStyle : {})
+          }}
+          onMouseEnter={() => setHovered(index)}
+          onMouseLeave={() => setHovered(null)}
+        >
+          {text[item]}
+        </a>
+      ) : (
+        <Link
+          to={`/${item === 'home' ? '' : item}`}
+          style={{
+            ...linkStyle,
+            ...(hovered === index ? linkHoverStyle : {})
+          }}
+          onMouseEnter={() => setHovered(index)}
+          onMouseLeave={() => setHovered(null)}
+        >
+          {text[item]}
+        </Link>
+      )}
+    </li>
+  ))}
 
-        {/* Admin Link */}
-        {user?.role === 'admin' && (
-          <li>
-            <Link
-              to="/admin"
-              style={{
-                ...linkStyle,
-                ...(hovered === 'admin' ? adminLinkHoverStyle : {})
-              }}
-              onMouseEnter={() => setHovered('admin')}
-              onMouseLeave={() => setHovered(null)}
-            >
-              <span style={{ marginLeft: lang === 'ar' ? '0' : '6px', marginRight: lang === 'ar' ? '6px' : '0' }}>👑</span>
-              {text.admin}
-            </Link>
-          </li>
-        )}
+  {/* Admin Link */}
+  {user?.role === 'admin' && (
+    <li>
+      <Link
+        to="/admin"
+        style={{
+          ...linkStyle,
+          ...(hovered === 'admin' ? adminLinkHoverStyle : {})
+        }}
+        onMouseEnter={() => setHovered('admin')}
+        onMouseLeave={() => setHovered(null)}
+      >
+        <span style={{ marginLeft: lang === 'ar' ? '0' : '6px', marginRight: lang === 'ar' ? '6px' : '0' }}>👑</span>
+        {text.admin}
+      </Link>
+    </li>
+  )}
 
-        {/* Auth Links */}
-        {!user ? (
-          <>
-            <li>
-              <Link
-                to="/login"
-                style={{
-                  ...authLinkStyle,
-                  ...(hovered === 'login' ? authLinkHoverStyle : {})
-                }}
-                onMouseEnter={() => setHovered('login')}
-                onMouseLeave={() => setHovered(null)}
-              >
-                {text.login}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/register"
-                style={{
-                  ...ctaLinkStyle,
-                  ...(hovered === 'register' ? ctaLinkHoverStyle : {})
-                }}
-                onMouseEnter={() => setHovered('register')}
-                onMouseLeave={() => setHovered(null)}
-              >
-                {text.register}
-              </Link>
-            </li>
-          </>
-        ) : (
-          <>
-            {/* User Info */}
-            <li style={userInfoStyle}>
-              <span style={{ marginLeft: lang === 'ar' ? '0' : '8px', marginRight: lang === 'ar' ? '8px' : '0' }}>👤</span>
-              {user.firstName} {user.lastName}
-            </li>
-            
-            {/* Logout Button */}
-            <li>
-              <button
-                onClick={handleLogout}
-                style={{
-                  ...logoutBtnStyle,
-                  ...(logoutHovered ? logoutBtnHoverStyle : {}),
-                }}
-                onMouseEnter={() => setLogoutHovered(true)}
-                onMouseLeave={() => setLogoutHovered(false)}
-              >
-                <span style={{ marginLeft: lang === 'ar' ? '0' : '6px', marginRight: lang === 'ar' ? '6px' : '0' }}>
-                  🚪
-                </span>
-                {text.logout}
-              </button>
-            </li>
-          </>
-        )}
+  {/* Auth Links */}
+  {!user ? (
+    <>
+      <li>
+        <Link
+          to="/login"
+          style={{
+            ...authLinkStyle,
+            ...(hovered === 'login' ? authLinkHoverStyle : {})
+          }}
+          onMouseEnter={() => setHovered('login')}
+          onMouseLeave={() => setHovered(null)}
+        >
+          {text.login}
+        </Link>
+      </li>
+      <li>
+        <Link
+          to="/register"
+          style={{
+            ...ctaLinkStyle,
+            ...(hovered === 'register' ? ctaLinkHoverStyle : {})
+          }}
+          onMouseEnter={() => setHovered('register')}
+          onMouseLeave={() => setHovered(null)}
+        >
+          {text.register}
+        </Link>
+      </li>
+    </>
+  ) : (
+    <>
+      <li style={userInfoStyle}>
+        <span style={{ marginLeft: lang === 'ar' ? '0' : '8px', marginRight: lang === 'ar' ? '8px' : '0' }}>👤</span>
+        {user.firstName} {user.lastName}
+      </li>
+      <li>
+        <button
+          onClick={handleLogout}
+          style={{
+            ...logoutBtnStyle,
+            ...(logoutHovered ? logoutBtnHoverStyle : {})
+          }}
+          onMouseEnter={() => setLogoutHovered(true)}
+          onMouseLeave={() => setLogoutHovered(false)}
+        >
+          <span style={{ marginLeft: lang === 'ar' ? '0' : '6px', marginRight: lang === 'ar' ? '6px' : '0' }}>
+            🚪
+          </span>
+          {text.logout}
+        </button>
+      </li>
+    </>
+  )}
 
-        {/* Language Toggle */}
-        <li>
-          <button 
-            onClick={toggleLang} 
-            style={{
-              ...langBtnStyle,
-              ...(langHovered ? langBtnHoverStyle : {})
-            }}
-            onMouseEnter={() => setLangHovered(true)}
-            onMouseLeave={() => setLangHovered(false)}
-          >
-            <span style={{ marginLeft: lang === 'ar' ? '0' : '6px', marginRight: lang === 'ar' ? '6px' : '0' }}>
-              🌐
-            </span>
-            {lang === 'ar' ? 'English' : 'عربي'}
-          </button>
-        </li>
-      </ul>
+  {/* Language Toggle */}
+  <li>
+    <button
+      onClick={toggleLang}
+      style={{
+        ...langBtnStyle,
+        ...(langHovered ? langBtnHoverStyle : {})
+      }}
+      onMouseEnter={() => setLangHovered(true)}
+      onMouseLeave={() => setLangHovered(false)}
+    >
+      <span style={{ marginLeft: lang === 'ar' ? '0' : '6px', marginRight: lang === 'ar' ? '6px' : '0' }}>
+        🌐
+      </span>
+      {lang === 'ar' ? 'English' : 'عربي'}
+    </button>
+  </li>
+</ul>
+
     </nav>
   );
 }
