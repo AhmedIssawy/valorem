@@ -5,6 +5,8 @@ import {
   updateCourse,
   createCourse,
   deleteCourse,
+  addVideoToCourse,
+  removeVideoFromCourse,
 } from "../controllers/admin.controller.js";
 import { courseValidator } from "../validators/course.validator.js";
 import handleValidationErrors from "../middlewares/handleValidation.js";
@@ -27,11 +29,17 @@ router
 
 router.route("/coupons").get(authenticate, authorization, getPageOfCoupons);
 
+router.route("/coupon/create").post(authenticate, authorization, createCoupon);
+
 router
   .route("/courses/:id")
   .patch(authenticate, authorization, updateCourse)
   .delete(authenticate, authorization, deleteCourse);
 
-router.route("/coupon/create").post(authenticate, authorization, createCoupon);
+router
+  .route("/courses/:id/videos")
+  .post(authenticate, authorization, addVideoToCourse)
+  .delete(authenticate, authorization, removeVideoFromCourse);
+
 
 export default router;

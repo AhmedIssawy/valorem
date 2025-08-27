@@ -27,6 +27,7 @@
     "client": "npm run dev --prefix client"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
     "concurrently": "^9.2.0",
     "nanoid": "^5.1.5"
   }

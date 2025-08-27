@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import AsyncHandler from "express-async-handler";
 
 const authenticate = AsyncHandler(async (req, res, next) => {
-  console.log(req.cookies);
+  // console.log(req.cookies);
 
   const token =
     req.cookies.__valorem_session || req.headers.authorization?.split(" ")[1];
@@ -27,5 +27,6 @@ const authorization = async (req, res, next) => {
   }
   next();
 };
+
 
 export { authenticate, authorization };

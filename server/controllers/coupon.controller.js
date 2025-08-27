@@ -1,6 +1,7 @@
 import Coupon from "../models/coupon.model.js";
 import User from "../models/user.model.js";
 import AsyncHandler from "express-async-handler";
+import sendResponse from "../handlers/response.handler.js";
 
 const createCoupon = AsyncHandler(async (req, res) => {
   const { course } = req.body;
@@ -19,17 +20,30 @@ const deleteCoupon = AsyncHandler(async (req, res) => {
 
 const redeemCoupon = AsyncHandler(async (req, res) => {
   const { code } = req.body;
+  // console.log(req.user);
 
   const coupon = await Coupon.findOne({ code });
   if (!coupon) {
-    return res.status(404).json({ message: "Coupon not found" });
+    return sendResponse(res, {
+      success: false,
+      statusCode: 404,
+      message: "Coupon not found",
+      error: "COUPON_NOT_FOUND",
+    });
   }
+  console.log("1");
 
   if (coupon.used === true) {
-    return res
-      .status(400)
-      .json({ message: "This coupon has already been used" });
+    return sendResponse(res, {
+      success: false,
+      statusCode: 400,
+      message: "This coupon has already been used",
+      error: "COUPON_ALREADY_USED",
+    });
   }
+  console.log("2");
+
+  console.log(coupon);
 
   const user = await User.findById(req.user._id);
   const alreadyHasCourse = user.courses.some(
@@ -37,17 +51,20 @@ const redeemCoupon = AsyncHandler(async (req, res) => {
   );
 
   if (alreadyHasCourse) {
-    return res.status(400).json({ message: "You already own this course" });
+    return sendResponse(res, 400, { message: "You already own this course" });
   }
 
   coupon.user = req.user._id;
-  coupon.used = true;
-  await coupon.save();
 
   user.courses.push(coupon.course);
-  await user.save();
 
-  res.status(200).json({ message: "Coupon redeemed successfully" });
+  coupon.used = true;
+
+  await coupon.save();
+  await user.save();
+  console.log(user);
+
+  sendResponse(res, { message: "Coupon redeemed successfully" });
 });
 
 const getPageOfCoupons = AsyncHandler(async (req, res) => {
@@ -69,9 +86,12 @@ const getPageOfCoupons = AsyncHandler(async (req, res) => {
     .limit(parseInt(limit))
     .lean();
 
-  res.status(200).json({
+  sendResponse(res, {
     data: {
       coupons,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      total: await Coupon.countDocuments(query),
     },
   });
 });

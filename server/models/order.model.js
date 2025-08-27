@@ -12,6 +12,7 @@ const orderSchema = new Schema({
     required: true,
     enum: ["credit_card", "paypal", "bank_transfer", "vfc", "insta_pay"],
   },
+  
   paid: {
     type: Boolean,
     default: false,

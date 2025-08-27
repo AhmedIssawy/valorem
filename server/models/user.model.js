@@ -23,7 +23,7 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    courses: [{ type: Schema.Types.ObjectId, ref: "Course" }],
+    courses: [{ type: Schema.Types.ObjectId, ref: "Product" }],
   },
   {
     timestamps: true,

@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import AsyncHandler from "express-async-handler";
 import { generateToken, generateCookie } from "../utils/headers.js";
+import sendResponse from "../handlers/response.handler.js";
 
 const Register = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
@@ -21,7 +22,8 @@ const Register = AsyncHandler(async (req, res) => {
   generateCookie(res, token);
 
   await user.save();
-  res.status(201).json({
+  sendResponse(res, {
+    statusCode: 201,
     data: {
       _id: user._id,
       name: user.name,
@@ -33,21 +35,29 @@ const Register = AsyncHandler(async (req, res) => {
 const Login = AsyncHandler(async (req, res) => {
   if (req.cookies.__valorem_session) {
     res.status(400);
-    throw new Error("Already signed in");
+    sendResponse(res, {
+      statusCode: 400,
+      message: "Already signed in",
+    });
+    return;
   }
   const { email, password } = req.body;
 
   // Validate user credentials
   const user = await User.findOne({ email });
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    res.status(401).json({ message: "Invalid email or password" });
+    sendResponse(res, {
+      statusCode: 401,
+      message: "Invalid email or password",
+    });
     return;
   }
   const token = generateToken({ id: user._id, isAdmin: user.isAdmin });
 
   generateCookie(res, token);
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: 200,
     data: {
       _id: user._id,
       name: user.name,
@@ -65,4 +75,30 @@ const LogOut = AsyncHandler(async (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 });
 
-export { Register, Login, LogOut };
+const getMe = AsyncHandler(async (req, res) => {
+  // req.user is set by the authenticate middleware
+  const user = await User.findById(req.user._id)
+    .select("-password -__v")
+    .populate("courses", "name price _id")
+    .lean();
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.status(200).json({
+    success: true,
+    data: {
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        courses: user.courses,
+        createdAt: user.createdAt
+      }
+    }
+  });
+});
+
+export { Register, Login, LogOut, getMe };

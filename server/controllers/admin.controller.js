@@ -88,4 +88,60 @@ const deleteCourse = AsyncHandler(async (req, res) => {
   });
 });
 
-export { getPageOfUsers, getUserById, updateCourse, createCourse, deleteCourse };
+const addVideoToCourse = AsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { videoUrl, videoTitle } = req.body;
+
+  if (!videoUrl) {
+    return res.status(400).json({ message: "Video URL is required" });
+  }
+
+  const course = await Product.findById(id);
+  if (!course) {
+    return res.status(404).json({ message: "Course not found" });
+  }
+
+  // Add video URL to the videos array
+  course.videos.push(videoUrl);
+  await course.save();
+
+  res.status(200).json({
+    message: "Video added successfully",
+    data: {
+      courseId: course._id,
+      courseName: course.name,
+      totalVideos: course.videos.length,
+      addedVideo: videoUrl
+    }
+  });
+});
+
+const removeVideoFromCourse = AsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { videoIndex } = req.body;
+
+  const course = await Product.findById(id);
+  if (!course) {
+    return res.status(404).json({ message: "Course not found" });
+  }
+
+  if (videoIndex < 0 || videoIndex >= course.videos.length) {
+    return res.status(400).json({ message: "Invalid video index" });
+  }
+
+  const removedVideo = course.videos[videoIndex];
+  course.videos.splice(videoIndex, 1);
+  await course.save();
+
+  res.status(200).json({
+    message: "Video removed successfully",
+    data: {
+      courseId: course._id,
+      courseName: course.name,
+      totalVideos: course.videos.length,
+      removedVideo
+    }
+  });
+});
+
+export { getPageOfUsers, getUserById, updateCourse, createCourse, deleteCourse, addVideoToCourse, removeVideoFromCourse };

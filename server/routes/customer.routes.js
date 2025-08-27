@@ -13,18 +13,19 @@ import { redeemCoupon } from "../controllers/coupon.controller.js";
 
 const router = Router();
 
-router.route("/courses").get(getPageOfCourses);
+router.route("/").get(getPageOfCourses);
 
-router.route("/courses/:id").get(getCourseById);
+router.route("/order/redeem").post(authenticate, redeemCoupon);
 
-router.route("/courses/:id/watch").get(authenticate, getCourseVideo);
+router.route("/:id").get(getCourseById);
+
+router.route("/:id/watch").get(authenticate, getCourseVideo);
 
 router
-  .route("/courses/:id/place")
+  .route("/:id/place")
   .post(authenticate, validateOrder, handleValidationErrors, createOrder);
 
-router.route("/courses/:id/order").get(authenticate, getOrderById);
+router.route("/:id/order").get(authenticate, getOrderById);
 
-router.route("/courses/:id/order/redeem").post(authenticate, redeemCoupon);
 
 export default router;
