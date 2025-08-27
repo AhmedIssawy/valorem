@@ -51,11 +51,14 @@ const LoginPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <nav className="flex justify-between items-center">
-            <div className="text-3xl font-black text-gray-800">
+        <div className="flex justify-between items-center pl-5 pr-6 py-5">
+          <nav className="flex justify-between items-center w-full">
+            <button 
+              onClick={() => navigate('/')}
+              className="text-3xl font-black text-gray-800 hover:text-blue-600 transition-colors cursor-pointer"
+            >
               Valorem
-            </div>
+            </button>
             <div className="flex space-x-6">
               <a href="/" className="text-lg font-semibold text-gray-600 hover:text-blue-600 transition-colors">
                 Home

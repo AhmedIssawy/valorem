@@ -34,9 +34,13 @@ import {
   PlayCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "@/hooks/useTranslation";
+import { useSettings } from "@/contexts/SettingsContext";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { language } = useSettings();
   
   // Smooth scroll function
   const scrollToSection = (sectionId: string) => {
@@ -241,20 +245,23 @@ const Home = () => {
   return (
     <div
       className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800"
-      dir="rtl"
+      dir={language === 'ar' ? 'rtl' : 'ltr'}
     >
       {/* Header */}
       <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <nav className="flex justify-between items-center">
-            <div className="text-2xl font-bold text-slate-800 dark:text-white">
-              Ali Bmbozya
-            </div>
+        <div className="flex justify-between items-center pl-5 pr-6 py-5">
+          <nav className="flex justify-between items-center w-full">
+          <button 
+            onClick={() => navigate('/')}
+            className="text-2xl font-bold text-slate-800 dark:text-white hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+          >
+            Valorem
+          </button>
             <div className="flex items-center space-x-8 space-x-reverse">
               <button
                 onClick={() => navigate('/settings')}
                 className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                aria-label="الإعدادات"
+                aria-label={t('settings')}
               >
                 <Settings className="h-5 w-5 text-slate-600 hover:text-purple-600 dark:text-slate-300 dark:hover:text-purple-400 transition-colors" />
               </button>
@@ -262,37 +269,37 @@ const Home = () => {
                 onClick={() => scrollToSection('about')}
                 className="text-slate-600 hover:text-purple-600 dark:text-slate-300 dark:hover:text-purple-400 transition-colors"
               >
-                نبذة
+                {t('about')}
               </button>
               <button
                 onClick={() => scrollToSection('skills')}
                 className="text-slate-600 hover:text-purple-600 dark:text-slate-300 dark:hover:text-purple-400 transition-colors"
               >
-                المهارات
+                {t('skills.title')}
               </button>
               <button
                 onClick={() => scrollToSection('projects')}
                 className="text-slate-600 hover:text-purple-600 dark:text-slate-300 dark:hover:text-purple-400 transition-colors"
               >
-                المشاريع
+                {t('projects.title')}
               </button>
               <button
                 onClick={() => navigate('/courses')}
                 className="text-slate-600 hover:text-purple-600 dark:text-slate-300 dark:hover:text-purple-400 transition-colors"
               >
-                الكورس
+                {t('courses')}
               </button>
               <button
                 onClick={() => scrollToSection('experience')}
                 className="text-slate-600 hover:text-purple-600 dark:text-slate-300 dark:hover:text-purple-400 transition-colors"
               >
-                الخبرة
+                {t('experience.title')}
               </button>
               <button
                 onClick={() => scrollToSection('contact')}
                 className="text-slate-600 hover:text-purple-600 dark:text-slate-300 dark:hover:text-purple-400 transition-colors"
               >
-                التواصل
+                {t('contact')}
               </button>
             </div>
           </nav>
@@ -306,26 +313,22 @@ const Home = () => {
             <div className="text-center md:text-right space-y-6">
               <div className="space-y-4">
                 <h1 className="text-5xl md:text-6xl font-bold text-slate-800 dark:text-white leading-tight">
-                  Ali Bmbozya
+                  {t('hero.title')}
                 </h1>
                 <h2 className="text-2xl md:text-3xl text-purple-600 dark:text-purple-400 font-medium">
-                  مصمم جرافيك ومبدع سينمائي
+                  {t('hero.subtitle')}
                 </h2>
                 <h3 className="text-xl text-amber-600 dark:text-amber-400 font-medium">
-                  متخصص في الذكاء الاصطناعي السينمائي
+                  {t('hero.specialization')}
                 </h3>
                 <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
-                  مقدم كورس احترافي في العالم العربي يعلمك كيف تنتج إعلان
-                  سينمائي كامل باستخدام أدوات الذكاء الاصطناعي – من الفكرة وحتى
-                  الإخراج، بدون كاميرا ولا فريق. الكورس مصمم بخطوات عملية تساعدك
-                  تطبّق وتبيع شغلك من أول مشروع. لو بتدور على مهارة جديدة فعليًا
-                  تفتحلك سوق… ده مش كورس، دي بداية شغل.
+                  {t('hero.description')}
                 </p>
               </div>
               <div className="flex flex-wrap justify-center md:justify-end gap-4">
                 <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
                   <Mail className="ml-2 h-4 w-4" />
-                  تواصل معي
+                  {t('hero.buttons.contact')}
                 </Button>
                 <Button
                   variant="outline"
@@ -333,7 +336,7 @@ const Home = () => {
                   className="border-purple-600 text-purple-600 hover:bg-purple-50"
                 >
                   <Play className="ml-2 h-4 w-4" />
-                  عرض الأعمال
+                  {t('hero.buttons.portfolio')}
                 </Button>
                 <Button
                   variant="outline"
@@ -342,7 +345,7 @@ const Home = () => {
                   onClick={() => navigate('/courses')}
                 >
                   <BookOpen className="ml-2 h-4 w-4" />
-                  الدورة التدريبية
+                  {t('hero.buttons.course')}
                 </Button>
               </div>
               <div className="flex justify-center md:justify-end gap-8 pt-6">
@@ -375,12 +378,12 @@ const Home = () => {
                 ))}
               </div>
             </div>
-            <div className="flex justify-center">
+            <div className="hidden lg:flex justify-center">
               <div className="relative">
                 <Avatar className="w-80 h-80 border-4 border-purple-200 shadow-2xl">
                   <AvatarImage
                     src="/api/placeholder/320/320"
-                    alt="محمد الفنان"
+                    alt="Ali Bmbozya"
                   />
                   <AvatarFallback className="text-4xl font-bold bg-purple-100 text-purple-800">
                     مف
@@ -406,28 +409,28 @@ const Home = () => {
           <div className="text-center text-white">
             <div className="mb-8">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-                🎬 دورة الذكاء الاصطناعي السينمائي الشاملة
+                {t('course.subtitle')}
               </h2>
               <p className="text-xl md:text-2xl mb-2 font-medium text-purple-100">
-                أول دورة عربية متكاملة في العالم
+                {t('course.badge')}
               </p>
               <p className="text-lg text-purple-50 max-w-3xl mx-auto leading-relaxed">
-                تعلم كيف تنتج إعلان سينمائي كامل باستخدام الذكاء الاصطناعي - من الفكرة حتى الإخراج
+                {t('course.description')}
               </p>
             </div>
             
             <div className="flex flex-wrap justify-center gap-6 mb-8">
               <div className="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3">
                 <div className="text-2xl font-bold">+2500</div>
-                <div className="text-sm">متدرب</div>
+                <div className="text-sm">{t('course.stats.students')}</div>
               </div>
               <div className="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3">
                 <div className="text-2xl font-bold">50+</div>
-                <div className="text-sm">ساعة تدريب</div>
+                <div className="text-sm">{t('course.stats.hours')}</div>
               </div>
               <div className="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3">
                 <div className="text-2xl font-bold">100%</div>
-                <div className="text-sm">عملي وتطبيقي</div>
+                <div className="text-sm">{t('course.stats.practical')}</div>
               </div>
             </div>
 
@@ -437,12 +440,12 @@ const Home = () => {
               className="bg-white text-purple-700 hover:bg-purple-50 text-lg px-12 py-6 rounded-2xl shadow-xl transform hover:scale-105 transition-all duration-300 font-bold"
             >
               <PlayCircle className="ml-3 h-6 w-6" />
-              ابدأ رحلتك الآن - شاهد الدورة
+              {t('course.cta')}
               <Sparkles className="mr-3 h-6 w-6" />
             </Button>
             
             <p className="mt-6 text-purple-100 text-sm">
-              💡 مش مجرد كورس... دي بداية مستقبلك في الإبداع السينمائي
+              {t('course.motivation')}
             </p>
           </div>
         </div>
@@ -458,7 +461,7 @@ const Home = () => {
         <div className="container mx-auto max-w-6xl px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-800 dark:text-white mb-4">
-              نبذة عني
+              {t('aboutSection.title')}
             </h2>
             <div className="w-20 h-1 bg-purple-600 mx-auto"></div>
           </div>
@@ -466,47 +469,37 @@ const Home = () => {
           <div className="grid md:grid-cols-2 gap-12">
             <div className="space-y-6">
               <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-                أهلاً وسهلاً، أنا محمد الفنان، مصمم جرافيك ومبدع سينمائي شغوف
-                بدمج الفن التقليدي مع أحدث تقنيات الذكاء الاصطناعي. أملك خبرة
-                تزيد عن 8 سنوات في مجال التصميم البصري والإنتاج السينمائي، وقد
-                تخصصت في السنوات الأخيرة في استخدام الذكاء الاصطناعي لإنتاج
-                محتوى بصري مبهر ومبتكر.
+                {t('aboutSection.description')}
               </p>
               <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-                بدأت رحلتي في عالم التصميم من خلال الفنون التقليدية، ثم انتقلت
-                تدريجياً إلى العالم الرقمي. اليوم، أقود ثورة في مجال الإنتاج
-                السينمائي بالذكاء الاصطناعي، حيث أطور مشاريع تجمع بين الإبداع
-                الإنساني والقوة التقنية للذكاء الاصطناعي.
+                {t('aboutSection.paragraph2')}
               </p>
               <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-                لقد قمت بتأسيس دورة "الذكاء الاصطناعي السينمائي الشاملة" التي
-                أصبحت المرجع الأول في العالم العربي لتعلم هذا المجال المتطور.
-                التحق بالدورة أكثر من 2500 متدرب من مختلف البلدان العربية، وقد
-                نجح الكثير منهم في إطلاق مشاريعهم الخاصة وتحقيق نجاحات مميزة.
+                {t('aboutSection.paragraph3')}
               </p>
               <div className="grid grid-cols-2 gap-6 pt-6">
                 <div className="flex items-center space-x-3 space-x-reverse">
                   <MapPin className="h-5 w-5 text-purple-600" />
                   <span className="text-slate-600 dark:text-slate-300">
-                    دبي، الإمارات
+                    {t('aboutSection.stats.location')}
                   </span>
                 </div>
                 <div className="flex items-center space-x-3 space-x-reverse">
                   <Calendar className="h-5 w-5 text-purple-600" />
                   <span className="text-slate-600 dark:text-slate-300">
-                    32 سنة
+                    {t('aboutSection.stats.age')}
                   </span>
                 </div>
                 <div className="flex items-center space-x-3 space-x-reverse">
                   <Briefcase className="h-5 w-5 text-purple-600" />
                   <span className="text-slate-600 dark:text-slate-300">
-                    8+ سنوات خبرة
+                    {t('aboutSection.stats.experience')}
                   </span>
                 </div>
                 <div className="flex items-center space-x-3 space-x-reverse">
                   <Award className="h-5 w-5 text-purple-600" />
                   <span className="text-slate-600 dark:text-slate-300">
-                    300+ مشروع
+                    {t('aboutSection.stats.projects')}
                   </span>
                 </div>
               </div>
@@ -516,7 +509,7 @@ const Home = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2 space-x-reverse">
                     <Users className="h-5 w-5 text-purple-600" />
-                    <span>إحصائيات الإنجازات</span>
+                    <span>{t('aboutSection.achievements.title')}</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -526,7 +519,7 @@ const Home = () => {
                         300+
                       </div>
                       <div className="text-sm text-slate-600 dark:text-slate-300">
-                        مشاريع مكتملة
+                        {t('aboutSection.achievements.completed')}
                       </div>
                     </div>
                     <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
@@ -534,7 +527,7 @@ const Home = () => {
                         150+
                       </div>
                       <div className="text-sm text-slate-600 dark:text-slate-300">
-                        عميل راضٍ
+                        {t('aboutSection.achievements.satisfied')}
                       </div>
                     </div>
                     <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
@@ -542,7 +535,7 @@ const Home = () => {
                         2500+
                       </div>
                       <div className="text-sm text-slate-600 dark:text-slate-300">
-                        متدرب في الدورة
+                        {t('aboutSection.achievements.trainees')}
                       </div>
                     </div>
                     <div className="p-4 bg-rose-50 dark:bg-rose-900/20 rounded-lg">
@@ -550,7 +543,7 @@ const Home = () => {
                         15+
                       </div>
                       <div className="text-sm text-slate-600 dark:text-slate-300">
-                        جائزة وتكريم
+                        {t('aboutSection.achievements.awards')}
                       </div>
                     </div>
                   </div>
@@ -559,7 +552,7 @@ const Home = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>الشهادات والاعتمادات المهنية</CardTitle>
+                  <CardTitle>{t('aboutSection.certifications.title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
@@ -586,13 +579,12 @@ const Home = () => {
       <section id="skills" className="min-h-screen flex items-center justify-center">
         <div className="container mx-auto max-w-7xl px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 dark:text-white mb-6">
-              المهارات والخبرات التقنية
+            <h2 className="text-4xl mt-5 md:text-5xl font-bold text-slate-800 dark:text-white mb-6">
+              {t('skills.title')}
             </h2>
             <div className="w-24 h-1 bg-purple-600 mx-auto mb-6"></div>
             <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
-              إتقان شامل لأحدث أدوات التصميم والإنتاج البصري مع تخصص في تقنيات
-              الذكاء الاصطناعي
+              {t('skills.subtitle')}
             </p>
           </div>
 
@@ -603,10 +595,10 @@ const Home = () => {
                   <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-full">
                     <Palette className="h-6 w-6 text-purple-600" />
                   </div>
-                  <span>أدوات التصميم الأساسية</span>
+                  <span>{t('skills.categories.basic')}</span>
                 </CardTitle>
                 <CardDescription className="text-center text-base mt-3">
-                  البرامج والأدوات التي أتقنها بشكل متقدم
+                  {t('skills.categories.basicDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-2">
@@ -632,10 +624,10 @@ const Home = () => {
                   <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-full">
                     <Wand2 className="h-6 w-6 text-amber-600" />
                   </div>
-                  <span>أدوات الذكاء الاصطناعي المتقدمة</span>
+                  <span>{t('skills.categories.ai')}</span>
                 </CardTitle>
                 <CardDescription className="text-center text-base mt-3">
-                  التقنيات الحديثة في الإنتاج البصري الذكي
+                  {t('skills.categories.aiDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-2">
@@ -664,50 +656,50 @@ const Home = () => {
                     <Video className="h-7 w-7 text-blue-600" />
                   </div>
                 </div>
-                <CardTitle className="text-xl">الإنتاج السينمائي</CardTitle>
+                <CardTitle className="text-xl">{t('skills.sections.cinema.title')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
                     <span className="text-sm font-medium">
-                      المونتاج والتحرير
+                      {t('skills.sections.cinema.editing')}
                     </span>
                     <Badge
                       variant="secondary"
                       className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
                     >
-                      خبير
+                      {t('skills.levels.expert')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
                     <span className="text-sm font-medium">
-                      المؤثرات البصرية
+                      {t('skills.sections.cinema.effects')}
                     </span>
                     <Badge
                       variant="secondary"
                       className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
                     >
-                      متقدم
+                      {t('skills.levels.advanced')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
                     <span className="text-sm font-medium">
-                      التصوير السينمائي
+                      {t('skills.sections.cinema.cinematography')}
                     </span>
                     <Badge
                       variant="secondary"
                       className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
                     >
-                      متقدم
+                      {t('skills.levels.advanced')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
-                    <span className="text-sm font-medium">التصحيح اللوني</span>
+                    <span className="text-sm font-medium">{t('skills.sections.cinema.colorGrading')}</span>
                     <Badge
                       variant="secondary"
                       className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
                     >
-                      خبير
+                      {t('skills.levels.expert')}
                     </Badge>
                   </div>
                 </div>
@@ -721,46 +713,46 @@ const Home = () => {
                     <Image className="h-7 w-7 text-green-600" />
                   </div>
                 </div>
-                <CardTitle className="text-xl">التصميم الجرافيكي</CardTitle>
+                <CardTitle className="text-xl">{t('skills.sections.graphic.title')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
-                    <span className="text-sm font-medium">الهوية البصرية</span>
+                    <span className="text-sm font-medium">{t('skills.sections.graphic.identity')}</span>
                     <Badge
                       variant="secondary"
                       className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
                     >
-                      خبير
+                      {t('skills.levels.expert')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
-                    <span className="text-sm font-medium">التصميم الطباعي</span>
+                    <span className="text-sm font-medium">{t('skills.sections.graphic.typography')}</span>
                     <Badge
                       variant="secondary"
                       className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
                     >
-                      متقدم
+                      {t('skills.levels.advanced')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
-                    <span className="text-sm font-medium">الرسوم المتحركة</span>
+                    <span className="text-sm font-medium">{t('skills.sections.graphic.animation')}</span>
                     <Badge
                       variant="secondary"
                       className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
                     >
-                      خبير
+                      {t('skills.levels.expert')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
                     <span className="text-sm font-medium">
-                      التصميم التفاعلي
+                      {t('skills.sections.graphic.interactive')}
                     </span>
                     <Badge
                       variant="secondary"
                       className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
                     >
-                      متقدم
+                      {t('skills.levels.advanced')}
                     </Badge>
                   </div>
                 </div>
@@ -774,50 +766,50 @@ const Home = () => {
                     <Sparkles className="h-7 w-7 text-purple-600" />
                   </div>
                 </div>
-                <CardTitle className="text-xl">الذكاء الاصطناعي</CardTitle>
+                <CardTitle className="text-xl">{t('skills.sections.ai.title')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
                     <span className="text-sm font-medium">
-                      توليد الصور بالـ AI
+                      {t('skills.sections.ai.imageGeneration')}
                     </span>
                     <Badge
                       variant="secondary"
                       className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
                     >
-                      خبير
+                      {t('skills.levels.expert')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
                     <span className="text-sm font-medium">
-                      إنتاج الفيديو الذكي
+                      {t('skills.sections.ai.videoProduction')}
                     </span>
                     <Badge
                       variant="secondary"
                       className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
                     >
-                      متقدم
+                      {t('skills.levels.advanced')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
                     <span className="text-sm font-medium">
-                      التدريب والاستشارات
+                      {t('skills.sections.ai.training')}
                     </span>
                     <Badge
                       variant="secondary"
                       className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
                     >
-                      خبير
+                      {t('skills.levels.expert')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 min-h-[52px]">
-                    <span className="text-sm font-medium">تطوير المحتوى</span>
+                    <span className="text-sm font-medium">{t('skills.sections.ai.contentDevelopment')}</span>
                     <Badge
                       variant="secondary"
                       className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
                     >
-                      متقدم
+                      {t('skills.levels.advanced')}
                     </Badge>
                   </div>
                 </div>
@@ -831,13 +823,12 @@ const Home = () => {
       <section id="projects" className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-900">
         <div className="container mx-auto max-w-7xl px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-slate-800 dark:text-white mb-4">
-              معرض الأعمال المختارة
+            <h2 className="text-4xl mt-5 font-bold text-slate-800 dark:text-white mb-4">
+              {t('projects.title')}
             </h2>
             <div className="w-20 h-1 bg-purple-600 mx-auto mb-4"></div>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-              مجموعة من أبرز المشاريع التي أنتجتها باستخدام أحدث تقنيات التصميم
-              والذكاء الاصطناعي
+              {t('projects.subtitle')}
             </p>
           </div>
 
@@ -889,14 +880,14 @@ const Home = () => {
                         className="flex items-center"
                       >
                         <Eye className="ml-1 h-4 w-4" />
-                        مشاهدة
+                        {t('projects.watch')}
                       </Button>
                       <Button
                         size="sm"
                         className="bg-purple-600 hover:bg-purple-700"
                       >
                         <Heart className="ml-1 h-4 w-4" />
-                        تفاصيل المشروع
+                        {t('projects.projectDetails')}
                       </Button>
                     </div>
                   </div>
@@ -905,14 +896,14 @@ const Home = () => {
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-12 mb-7">
             <Button
               variant="outline"
               size="lg"
               className="border-purple-600 text-purple-600 hover:bg-purple-50"
             >
-              <Play className="ml-2 h-4 w-4" />
-              عرض جميع المشاريع
+              <Play className="ml-2  h-4 w-4" />
+              {t('projects.viewAll')}
             </Button>
           </div>
         </div>
@@ -921,64 +912,63 @@ const Home = () => {
       {/* Course Section */}
       <section
         id="course"
-        className="py-20 bg-gradient-to-br from-purple-50 to-amber-50 dark:from-purple-900/20 dark:to-amber-900/20"
+        className="py-16 md:py-20 bg-gradient-to-br from-purple-50 to-amber-50 dark:from-purple-900/20 dark:to-amber-900/20"
       >
-        <div className="container mx-auto max-w-6xl px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-slate-800 dark:text-white mb-4">
-              دورة الذكاء الاصطناعي السينمائي
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-white mb-4">
+              {t('course.title')}
             </h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-purple-600 to-amber-600 mx-auto mb-4"></div>
-            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-              الدورة التدريبية الأشمل في العالم العربي لتعلم فن الإنتاج
-              السينمائي باستخدام أحدث تقنيات الذكاء الاصطناعي
+            <div className="w-20 h-1 bg-gradient-to-r from-purple-600 to-amber-600 mx-auto mb-6"></div>
+            <p className="text-base md:text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
+              {t('course.description')}
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-start">
             <div className="space-y-6">
-              <Card className="border-none bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-center">
+              <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm hover:shadow-xl transition-shadow duration-300">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl md:text-2xl text-center text-slate-800 dark:text-white">
                     {courseInfo.title}
                   </CardTitle>
-                  <CardDescription className="text-center text-lg">
+                  <CardDescription className="text-center text-base md:text-lg text-slate-600 dark:text-slate-400 mt-2">
                     {courseInfo.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-6 text-center mb-6">
-                    <div className="p-4 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                      <div className="text-2xl font-bold text-purple-600">
+                <CardContent className="pt-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                    <div className="p-4 md:p-6 bg-purple-100 dark:bg-purple-900/30 rounded-xl text-center min-h-[100px] flex flex-col justify-center">
+                      <div className="text-xl md:text-2xl font-bold text-purple-600 dark:text-purple-400">
                         {courseInfo.duration}
                       </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-300">
-                        مدة التدريب
+                      <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+                        {t('course.duration')}
                       </div>
                     </div>
-                    <div className="p-4 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                      <div className="text-2xl font-bold text-amber-600">
+                    <div className="p-4 md:p-6 bg-amber-100 dark:bg-amber-900/30 rounded-xl text-center min-h-[100px] flex flex-col justify-center">
+                      <div className="text-xl md:text-2xl font-bold text-amber-600 dark:text-amber-400">
                         {courseInfo.modules}
                       </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-300">
-                        وحدة تدريبية
+                      <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+                        {t('course.modules')}
                       </div>
                     </div>
-                    <div className="p-4 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">
+                    <div className="p-4 md:p-6 bg-green-100 dark:bg-green-900/30 rounded-xl text-center min-h-[100px] flex flex-col justify-center">
+                      <div className="text-xl md:text-2xl font-bold text-green-600 dark:text-green-400">
                         {courseInfo.students}+
                       </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-300">
-                        متدرب خريج
+                      <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+                        {t('course.students')}
                       </div>
                     </div>
-                    <div className="p-4 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600 flex items-center justify-center">
-                        <Star className="h-5 w-5 ml-1" />
+                    <div className="p-4 md:p-6 bg-blue-100 dark:bg-blue-900/30 rounded-xl text-center min-h-[100px] flex flex-col justify-center">
+                      <div className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400 flex items-center justify-center gap-1">
+                        <Star className="h-5 w-5" />
                         {courseInfo.rating}
                       </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-300">
-                        تقييم الطلاب
+                      <div className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+                        {t('course.rating')}
                       </div>
                     </div>
                   </div>
@@ -986,10 +976,11 @@ const Home = () => {
                   <div className="text-center">
                     <Button
                       size="lg"
-                      className="bg-gradient-to-r from-purple-600 to-amber-600 hover:from-purple-700 hover:to-amber-700 text-white px-8"
+                      className="bg-gradient-to-r from-purple-600 to-amber-600 hover:from-purple-700 hover:to-amber-700 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                      onClick={() => navigate('/courses')}
                     >
                       <BookOpen className="ml-2 h-5 w-5" />
-                      سجل في الدورة الآن
+                      {t('course.cta')}
                     </Button>
                   </div>
                 </CardContent>
@@ -997,23 +988,23 @@ const Home = () => {
             </div>
 
             <div className="space-y-6">
-              <h3 className="text-2xl font-semibold text-slate-800 dark:text-white mb-6">
-                ماذا ستتعلم في هذه الدورة؟
+              <h3 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-white mb-6">
+                {t('course.features.title')}
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
                 {courseInfo.features.map((feature, index) => (
                   <Card
                     key={index}
-                    className="border-none bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm"
+                    className="border-0 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm hover:bg-white/90 dark:hover:bg-slate-800/90 transition-all duration-200 shadow-sm hover:shadow-md"
                   >
                     <CardContent className="p-4">
-                      <div className="flex items-center space-x-3 space-x-reverse">
-                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-amber-500 rounded-full flex items-center justify-center">
+                      <div className="flex items-start space-x-3 space-x-reverse">
+                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-amber-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                           <span className="text-white font-bold text-sm">
                             {index + 1}
                           </span>
                         </div>
-                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm md:text-base">
                           {feature}
                         </p>
                       </div>
@@ -1022,16 +1013,17 @@ const Home = () => {
                 ))}
               </div>
 
-              <Card className="border-none bg-gradient-to-r from-purple-500 to-amber-500 text-white">
+              <Card className="border-0 bg-gradient-to-r from-purple-500 to-amber-500 text-white shadow-lg">
                 <CardContent className="p-6 text-center">
-                  <h4 className="text-xl font-bold mb-2">عرض خاص محدود!</h4>
-                  <p className="mb-4">احصل على خصم 40% عند التسجيل هذا الشهر</p>
+                  <h4 className="text-lg md:text-xl font-bold mb-2">{t('course.offer.title')}</h4>
+                  <p className="mb-4 text-purple-100">{t('course.offer.description')}</p>
                   <Button
                     variant="secondary"
                     size="lg"
-                    className="bg-white text-purple-700 hover:bg-gray-100"
+                    className="bg-white text-purple-700 hover:bg-gray-100 px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-200"
+                    onClick={() => navigate('/courses')}
                   >
-                    اشترك الآن واوفر 1200 ريال
+                    {t('course.offer.cta')}
                   </Button>
                 </CardContent>
               </Card>
@@ -1045,7 +1037,7 @@ const Home = () => {
         <div className="container mx-auto max-w-6xl px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-800 dark:text-white mb-4">
-              الخبرة المهنية والأكاديمية
+              {t('experience.title')}
             </h2>
             <div className="w-20 h-1 bg-purple-600 mx-auto"></div>
           </div>
@@ -1054,7 +1046,7 @@ const Home = () => {
             <div>
               <h3 className="text-2xl font-semibold text-slate-800 dark:text-white mb-8 flex items-center">
                 <Briefcase className="ml-3 h-6 w-6 text-purple-600" />
-                المسيرة المهنية
+                {t('experience.career')}
               </h3>
               <div className="space-y-8">
                 {experiences.map((exp, index) => (
@@ -1105,7 +1097,7 @@ const Home = () => {
             <div>
               <h3 className="text-2xl font-semibold text-slate-800 dark:text-white mb-8 flex items-center">
                 <GraduationCap className="ml-3 h-6 w-6 text-purple-600" />
-                التعليم والتأهيل الأكاديمي
+                {t('experience.education')}
               </h3>
               <div className="space-y-8">
                 {education.map((edu, index) => (
@@ -1154,12 +1146,11 @@ const Home = () => {
         <div className="container mx-auto max-w-6xl px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-800 dark:text-white mb-4">
-              الخدمات الإبداعية المتخصصة
+              {t('servicesSection.title')}
             </h2>
             <div className="w-20 h-1 bg-purple-600 mx-auto mb-4"></div>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-              مجموعة شاملة من الخدمات الإبداعية والتقنية التي تجمع بين الفن
-              التقليدي والذكاء الاصطناعي
+              {t('servicesSection.subtitle')}
             </p>
           </div>
 
@@ -1282,7 +1273,7 @@ const Home = () => {
         <div className="container mx-auto max-w-6xl px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-800 dark:text-white mb-4">
-              آراء العملاء والمتدربين
+              {t('testimonials.title')}
             </h2>
             <div className="w-20 h-1 bg-purple-600 mx-auto"></div>
           </div>
@@ -1384,12 +1375,11 @@ const Home = () => {
         <div className="container mx-auto max-w-6xl px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-800 dark:text-white mb-4">
-              تواصل معي
+              {t('contactSection.title')}
             </h2>
             <div className="w-20 h-1 bg-purple-600 mx-auto mb-4"></div>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-              هل لديك مشروع إبداعي أو تريد التسجيل في الدورة؟ تواصل معي الآن
-              ودعنا نحول أفكارك إلى واقع مذهل
+              {t('contactSection.subtitle')}
             </p>
           </div>
 
@@ -1397,8 +1387,8 @@ const Home = () => {
             <div className="space-y-8">
               <Card>
                 <CardHeader>
-                  <CardTitle>معلومات التواصل</CardTitle>
-                  <CardDescription>تواصل معي عبر الطرق التالية</CardDescription>
+                  <CardTitle>{t('contactSection.info.title')}</CardTitle>
+                  <CardDescription>{t('contactSection.info.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center space-x-4 space-x-reverse">
@@ -1407,7 +1397,7 @@ const Home = () => {
                     </div>
                     <div>
                       <p className="font-medium text-slate-800 dark:text-white">
-                        البريد الإلكتروني
+                        {t('contactSection.info.email')}
                       </p>
                       <p className="text-slate-600 dark:text-slate-300">
                         mohammed.artist@example.com
@@ -1420,7 +1410,7 @@ const Home = () => {
                     </div>
                     <div>
                       <p className="font-medium text-slate-800 dark:text-white">
-                        رقم الهاتف / واتساب
+                        {t('contactSection.info.phone')}
                       </p>
                       <p className="text-slate-600 dark:text-slate-300">
                         +971 55 123 4567
@@ -1433,10 +1423,10 @@ const Home = () => {
                     </div>
                     <div>
                       <p className="font-medium text-slate-800 dark:text-white">
-                        الموقع
+                        {t('contactSection.info.location')}
                       </p>
                       <p className="text-slate-600 dark:text-slate-300">
-                        دبي، دولة الإمارات العربية المتحدة
+                        {t('contactSection.info.locationValue')}
                       </p>
                     </div>
                   </div>
@@ -1446,10 +1436,10 @@ const Home = () => {
               <Card className="bg-gradient-to-r from-purple-500 to-amber-500 text-white">
                 <CardHeader>
                   <CardTitle className="text-white">
-                    تسجيل سريع في الدورة
+                    {t('contactSection.quickRegistration.title')}
                   </CardTitle>
                   <CardDescription className="text-purple-100">
-                    انضم إلى أكثر من 2500 متدرب واكتسب مهارات المستقبل
+                    {t('contactSection.quickRegistration.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -1459,10 +1449,10 @@ const Home = () => {
                       className="w-full bg-white text-purple-700 hover:bg-gray-100"
                     >
                       <BookOpen className="ml-2 h-5 w-5" />
-                      سجل في الدورة الآن - خصم 40%
+                      {t('contactSection.quickRegistration.cta')}
                     </Button>
                     <div className="text-center text-sm text-purple-100">
-                      ⏰ العرض ينتهي خلال 5 أيام - لا تفوت الفرصة!
+                      {t('contactSection.quickRegistration.urgency')}
                     </div>
                   </div>
                 </CardContent>
@@ -1470,7 +1460,7 @@ const Home = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>تابعني على الشبكات الاجتماعية</CardTitle>
+                  <CardTitle>{t('contactSection.social.title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex space-x-4 space-x-reverse mb-4">
@@ -1502,9 +1492,9 @@ const Home = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>أرسل رسالة</CardTitle>
+                <CardTitle>{t('contactSection.form.title')}</CardTitle>
                 <CardDescription>
-                  سأقوم بالرد عليك خلال 24 ساعة كحد أقصى
+                  {t('contactSection.form.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -1512,13 +1502,13 @@ const Home = () => {
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        الاسم الكامل
+                        {t('contactSection.form.name')}
                       </label>
                       <input className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-slate-600 dark:bg-slate-800" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        البريد الإلكتروني
+                        {t('contactSection.form.email')}
                       </label>
                       <input
                         type="email"
@@ -1528,30 +1518,30 @@ const Home = () => {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                      نوع الخدمة المطلوبة
+                      {t('contactSection.form.service')}
                     </label>
                     <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-slate-600 dark:bg-slate-800">
-                      <option>اختر نوع الخدمة</option>
-                      <option>إنتاج سينمائي ذكي</option>
-                      <option>تصميم جرافيك</option>
-                      <option>دورة الذكاء الاصطناعي</option>
-                      <option>استشارة إبداعية</option>
-                      <option>أخرى</option>
+                      <option>{t('contactSection.form.selectService')}</option>
+                      <option>{t('contactSection.form.services.production')}</option>
+                      <option>{t('contactSection.form.services.design')}</option>
+                      <option>{t('contactSection.form.services.course')}</option>
+                      <option>{t('contactSection.form.services.consultation')}</option>
+                      <option>{t('contactSection.form.services.other')}</option>
                     </select>
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                      تفاصيل المشروع أو الاستفسار
+                      {t('contactSection.form.message')}
                     </label>
                     <textarea
                       rows={5}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-slate-600 dark:bg-slate-800 resize-none"
-                      placeholder="اكتب تفاصيل مشروعك أو استفسارك هنا..."
+                      placeholder={t('contactSection.form.messagePlaceholder')}
                     ></textarea>
                   </div>
                   <Button className="w-full bg-purple-600 hover:bg-purple-700">
                     <Mail className="ml-2 h-4 w-4" />
-                    إرسال الرسالة
+                    {t('contactSection.form.send')}
                   </Button>
                 </form>
               </CardContent>
@@ -1567,7 +1557,7 @@ const Home = () => {
             <div>
               <h3 className="text-xl font-bold mb-4 flex items-center">
                 <Palette className="ml-2 h-5 w-5 text-purple-400" />
-                محمد الفنان
+                Ali Bmbozya
               </h3>
               <p className="text-slate-300 leading-relaxed text-sm">
                 مصمم جرافيك ومبدع سينمائي متخصص في دمج الذكاء الاصطناعي مع الفن
@@ -1625,7 +1615,7 @@ const Home = () => {
                 <li>
                   <button
                     onClick={() => scrollToSection('projects')}
-                    className="hover:text-white transition-colors text-left"
+                    className="hover:text-white text-4xl transition-colors text-left"
                   >
                     معرض الأعمال
                   </button>

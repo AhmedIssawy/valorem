@@ -439,9 +439,15 @@ const CourseWatchPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900">
       {/* Enhanced Header */}
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 px-6 py-4 shadow-sm">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center space-x-4">
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-6 pl-5 pr-4 py-5">
+            <button
+              onClick={() => navigate('/')}
+              className="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors cursor-pointer"
+            >
+              Valorem
+            </button>
             <button
               onClick={() => navigate('/courses')}
               className="group flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200"
@@ -453,10 +459,12 @@ const CourseWatchPage: React.FC = () => {
             </button>
           </div>
           <div className="text-right">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <div className="px-4 lg:px-32 xl:px-64 text-right">
+              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               {course?.name}
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{course?.category}</p>
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{course?.category}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -645,6 +653,74 @@ const CourseWatchPage: React.FC = () => {
                       {course?.description}
                     </p>
                   </div>
+
+                  <div className="pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
+                    <div className="space-y-4">
+                      <h4 className="font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                        <span>Next Lessons</span>
+                      </h4>
+                      
+                      <div className="space-y-3">
+                        {/* Placeholder for next lessons */}
+                        <div className="p-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-600/50 rounded-xl border border-gray-200/50 dark:border-gray-600/50">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">2</span>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+                                Advanced React Concepts
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">12:45 duration</p>
+                            </div>
+                            <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                          </div>
+                        </div>
+
+                        <div className="p-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-600/50 rounded-xl border border-gray-200/50 dark:border-gray-600/50">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">3</span>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+                                State Management Patterns
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">18:20 duration</p>
+                            </div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                          </div>
+                        </div>
+
+                        <div className="p-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-600/50 rounded-xl border border-gray-200/50 dark:border-gray-600/50">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-teal-500 rounded-full flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">4</span>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+                                Performance Optimization
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">15:30 duration</p>
+                            </div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Button 
+                        variant="outline" 
+                        className="w-full mt-4 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 text-gray-600 dark:text-gray-300"
+                        disabled
+                      >
+                        <div className="flex items-center space-x-2">
+                          <span>📚</span>
+                          <span>View All Lessons</span>
+                        </div>
+                      </Button>
+                    </div>
+                  </div>
 {/* 
                   <div className="pt-4 border-t border-gradient-to-r from-gray-200 to-gray-100 dark:from-gray-700 dark:to-gray-600">
                     <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl">
@@ -683,7 +759,7 @@ const CourseWatchPage: React.FC = () => {
                     </div>
                   </div> */}
 
-                  <div className="pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
+                  {/* <div className="pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
                     <Button 
                       onClick={() => refetch()} 
                       variant="outline" 
@@ -702,7 +778,7 @@ const CourseWatchPage: React.FC = () => {
                         </div>
                       )}
                     </Button>
-                  </div>
+                  </div> */}
 
                   {/* Progress Indicator */}
                   <div className="pt-4 border-t border-gray-200/50 dark:border-gray-700/50">

@@ -1,83 +1,63 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Moon, Sun, Bell, Shield, Globe, User, Save, ArrowLeft } from "lucide-react";
+import { useSettings } from "../contexts/SettingsContext";
+import { useTranslation } from "../hooks/useTranslation";
 
 const SettingsPage = () => {
-  const [darkMode, setDarkMode] = useState(false);
-  const [notifications, setNotifications] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [twoFactorAuth, setTwoFactorAuth] = useState(false);
-  const [language, setLanguage] = useState("en");
-  const [autoSave, setAutoSave] = useState(true);
-  const [publicProfile, setPublicProfile] = useState(false);
   const navigate = useNavigate();
-
-  // Load theme from localStorage on component mount
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      setDarkMode(true);
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
-
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
+  const { t } = useTranslation();
+  const {
+    darkMode,
+    toggleDarkMode,
+    language,
+    setLanguage,
+    notifications,
+    setNotifications,
+    emailNotifications,
+    setEmailNotifications,
+    twoFactorAuth,
+    setTwoFactorAuth,
+    autoSave,
+    setAutoSave,
+    publicProfile,
+    setPublicProfile,
+    saveSettings
+  } = useSettings();
 
   const handleSave = () => {
-    // Save settings to localStorage (in a real app, you'd save to a backend)
-    const settings = {
-      darkMode,
-      notifications,
-      emailNotifications,
-      twoFactorAuth,
-      language,
-      autoSave,
-      publicProfile
-    };
-    localStorage.setItem('userSettings', JSON.stringify(settings));
-    alert('Settings saved successfully!');
+    saveSettings();
+    alert(t('save_success'));
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       {/* Header */}
       <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <nav className="flex justify-between items-center">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => navigate('/')}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              >
-                <ArrowLeft className="h-6 w-6 text-gray-600 dark:text-gray-300" />
-              </button>
-              <div className="text-3xl font-black text-gray-800 dark:text-white">
-                Valorem
-              </div>
+        <div className="flex justify-between items-center pl-5 pr-6 py-5">
+          <nav className="flex justify-between items-center w-full">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigate('/')}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
+              <ArrowLeft className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+            </button>
+            <button 
+              onClick={() => navigate('/')}
+              className="text-3xl font-black text-gray-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              Valorem
+            </button>
             </div>
             <div className="flex space-x-6">
               <a href="/" className="text-lg font-semibold text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                Home
+                {t('home')}
               </a>
               <a href="/about" className="text-lg font-semibold text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                About
+                {t('about')}
               </a>
               <a href="/contact" className="text-lg font-semibold text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                Contact
+                {t('contact')}
               </a>
             </div>
           </nav>
@@ -89,7 +69,7 @@ const SettingsPage = () => {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
           <div className="p-8">
             <h1 className="text-4xl font-black text-gray-800 dark:text-white mb-3">
-              Settings
+              {t('settings')}
             </h1>
             <p className="text-lg font-medium text-gray-500 dark:text-gray-400 mb-8">
               Customize your experience
@@ -100,7 +80,7 @@ const SettingsPage = () => {
               <div className="border-b border-gray-200 dark:border-gray-700 pb-8">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
                   <Sun className="h-6 w-6 mr-3 text-yellow-500" />
-                  Appearance
+                  {t('appearance')}
                 </h2>
                 
                 {/* Dark Mode Toggle */}
@@ -113,10 +93,10 @@ const SettingsPage = () => {
                     )}
                     <div>
                       <div className="font-semibold text-gray-800 dark:text-white">
-                        {darkMode ? 'Dark Mode' : 'Light Mode'}
+                        {darkMode ? t('theme.dark') : t('theme.light')}
                       </div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Switch between light and dark themes
+                        {t('theme.description')}
                       </div>
                     </div>
                   </div>
@@ -139,7 +119,7 @@ const SettingsPage = () => {
               <div className="border-b border-gray-200 dark:border-gray-700 pb-8">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
                   <Bell className="h-6 w-6 mr-3 text-green-500" />
-                  Notifications
+                  {t('notifications')}
                 </h2>
                 
                 <div className="space-y-4">
@@ -187,7 +167,7 @@ const SettingsPage = () => {
               <div className="border-b border-gray-200 dark:border-gray-700 pb-8">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
                   <Shield className="h-6 w-6 mr-3 text-red-500" />
-                  Security
+                  {t('security')}
                 </h2>
                 
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -214,13 +194,13 @@ const SettingsPage = () => {
               <div className="border-b border-gray-200 dark:border-gray-700 pb-8">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
                   <Globe className="h-6 w-6 mr-3 text-purple-500" />
-                  General
+                  {t('general')}
                 </h2>
                 
                 <div className="space-y-4">
                   <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <label className="block font-semibold text-gray-800 dark:text-white mb-2">
-                      Language
+                      {t('language')}
                     </label>
                     <select
                       value={language}
@@ -259,7 +239,7 @@ const SettingsPage = () => {
               <div className="pb-8">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
                   <User className="h-6 w-6 mr-3 text-indigo-500" />
-                  Privacy
+                  {t('privacy')}
                 </h2>
                 
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -290,7 +270,7 @@ const SettingsPage = () => {
                 className="flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded-lg transition-colors duration-200"
               >
                 <Save className="h-5 w-5" />
-                <span>Save Settings</span>
+                <span>{t('save')}</span>
               </button>
             </div>
           </div>

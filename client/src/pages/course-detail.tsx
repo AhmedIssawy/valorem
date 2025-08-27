@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { Button } from '../components/ui/button';
 import { toast } from 'react-toastify';
 import { useAuth } from '../hooks/useAuth';
+import { useSettings } from '../contexts/SettingsContext';
+import { useTranslation } from '../hooks/useTranslation';
 import { COURSE_DETAIL_PLACEHOLDER } from '../utils/placeholderImage';
 import { Link } from 'react-router-dom';
 interface CourseDetail {
@@ -23,6 +25,9 @@ const CourseDetailPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [showOrderForm, setShowOrderForm] = useState(false);
+  
+  // Get settings and translations
+  const { t } = useTranslation();
 
   // Get user info using the auth hook with localStorage
   const { isAuthenticated, user: userInfo, isLoading: isUserLoading } = useAuth();
@@ -32,16 +37,16 @@ const CourseDetailPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-lg">Loading course details...</div>
+      <div className="flex justify-center items-center min-h-screen bg-white dark:bg-gray-900">
+        <div className="text-lg text-gray-900 dark:text-white">{t('loading')}</div>
       </div>
     );
   }
 
   if (error || !courseData?.data) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-lg text-red-500">Course not found</div>
+      <div className="flex justify-center items-center min-h-screen bg-white dark:bg-gray-900">
+        <div className="text-lg text-red-500 dark:text-red-400">{t('error')}</div>
       </div>
     );
   }
@@ -79,8 +84,19 @@ const CourseDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="bg-white dark:bg-gray-900 min-h-screen transition-colors">
+      {/* Header with Valorem brand */}
+      <div className="pl-5 pr-4 py-5">
+        <button
+          onClick={() => navigate('/')}
+          className="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors cursor-pointer"
+        >
+          Valorem
+        </button>
+      </div>
+      
+      <div className="container mx-auto px-4 py-4">
+        <div className="max-w-4xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Course Image */}
           <div className="aspect-video w-full overflow-hidden rounded-lg">
@@ -97,11 +113,11 @@ const CourseDetailPage: React.FC = () => {
           {/* Course Info */}
           <div className="space-y-6">
             <div>
-              <span className="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full mb-2">
+              <span className="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-sm px-3 py-1 rounded-full mb-2 transition-colors">
                 {course.category}
               </span>
-              <h1 className="text-3xl font-bold mb-4">{course.name}</h1>
-              <p className="text-gray-600 text-lg leading-relaxed">{course.description}</p>
+              <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">{course.name}</h1>
+              <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">{course.description}</p>
             </div>
 
             <div className="border-t pt-6">
@@ -169,7 +185,7 @@ const CourseDetailPage: React.FC = () => {
                   <CardContent>
                     <form onSubmit={handlePurchase} className="space-y-4">
                       <div>
-                        <label htmlFor="email" className="block text-sm font-medium mb-2">
+                        <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
                           Email Address *
                         </label>
                         <input
@@ -177,20 +193,20 @@ const CourseDetailPage: React.FC = () => {
                           id="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
                           required
                         />
                       </div>
 
                       <div>
-                        <label htmlFor="paymentMethod" className="block text-sm font-medium mb-2">
+                        <label htmlFor="paymentMethod" className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
                           Payment Method *
                         </label>
                         <select
                           id="paymentMethod"
                           value={paymentMethod}
                           onChange={(e) => setPaymentMethod(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
                           required
                         >
                           <option value="">Select payment method</option>
@@ -201,6 +217,75 @@ const CourseDetailPage: React.FC = () => {
                           <option value="insta_pay">InstaPay</option>
                         </select>
                       </div>
+
+                      {/* VFC Payment Details */}
+                      {paymentMethod === 'vfc' && (
+                        <div className="hidden sm:block bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4 transition-colors">
+                          <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-3">
+                            {t('payment.vfc.title')}
+                          </h3>
+                          <p className="text-sm text-blue-700 dark:text-blue-300 mb-3">
+                            {t('payment.vfc.instruction')}
+                          </p>
+                          <div className="bg-white dark:bg-gray-800 border border-blue-300 dark:border-blue-600 rounded-md p-3 flex items-center justify-between transition-colors">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-lg font-mono font-bold text-gray-800 dark:text-gray-200">
+                                01033909895
+                              </span>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                navigator.clipboard.writeText('01033909895');
+                                toast.success(t('payment.vfc.copied'));
+                              }}
+                              className="text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+                            >
+                              📋 {t('payment.vfc.copy')}
+                            </Button>
+                          </div>
+                          <div className="mt-3 text-xs text-blue-600 dark:text-blue-400">
+                            <p>💡 {t('payment.vfc.tip')}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Mobile VFC Payment Details */}
+                      {paymentMethod === 'vfc' && (
+                        <div className="sm:hidden bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-3 transition-colors">
+                          <h3 className="text-base font-semibold text-blue-800 dark:text-blue-200 mb-2">
+                            {t('payment.vfc.title')}
+                          </h3>
+                          <p className="text-xs text-blue-700 dark:text-blue-300 mb-2">
+                            {t('payment.vfc.instruction')}
+                          </p>
+                          <div className="bg-white dark:bg-gray-800 border border-blue-300 dark:border-blue-600 rounded-md p-2 transition-colors">
+                            <div className="flex flex-col space-y-2">
+                              <span className="text-base font-mono font-bold text-gray-800 dark:text-gray-200 text-center">
+                                01033909895
+                              </span>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  navigator.clipboard.writeText('01033909895');
+                                  toast.success(t('payment.vfc.copied'));
+                                }}
+                                className="w-full text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors text-xs"
+                              >
+                                📋 {t('payment.vfc.copy')}
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="mt-2 text-xs text-blue-600 dark:text-blue-400">
+                            <p>💡 {t('payment.vfc.tip')}</p>
+                          </div>
+                        </div>
+                      )}
+                      
 
                       <div className="flex gap-3">
                         <Button
@@ -245,6 +330,7 @@ const CourseDetailPage: React.FC = () => {
             </Card>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

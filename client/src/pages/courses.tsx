@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useGetCoursesQuery } from '../app/api/coursesApiSlice';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -15,6 +15,7 @@ interface Course {
 
 const CoursesPage: React.FC = () => {
   const { data: coursesData, isLoading, error } = useGetCoursesQuery({ page: 1, limit: 20 });
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -35,13 +36,24 @@ const CoursesPage: React.FC = () => {
   const courses = coursesData?.data || [];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-center mb-4">Our Courses</h1>
-        <p className="text-lg text-gray-600 text-center max-w-2xl mx-auto">
-          Discover our comprehensive collection of courses designed to help you master new skills and advance your career.
-        </p>
+    <div className="bg-white dark:bg-gray-900 min-h-screen transition-colors">
+      {/* Header with Valorem brand */}
+      <div className="pl-5 pr-4 py-5">
+        <button
+          onClick={() => navigate('/')}
+          className="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors cursor-pointer"
+        >
+          Valorem
+        </button>
       </div>
+
+      <div className="container mx-auto px-4 py-4">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-center mb-4">Our Courses</h1>
+          <p className="text-lg text-gray-600 text-center max-w-2xl mx-auto">
+            Discover our comprehensive collection of courses designed to help you master new skills and advance your career.
+          </p>
+        </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {courses.map((course: Course) => (
@@ -84,6 +96,7 @@ const CoursesPage: React.FC = () => {
           <p className="text-gray-600">Check back later for new courses!</p>
         </div>
       )}
+      </div>
     </div>
   );
 };
