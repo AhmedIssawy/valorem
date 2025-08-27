@@ -32,7 +32,7 @@ const AdminCourseVideosPage: React.FC = () => {
       });
 
       if (response.ok) {
-        const result = await response.json();
+        await response.json();
         toast.success('Video added successfully!');
         setVideoUrl('');
         refetch();

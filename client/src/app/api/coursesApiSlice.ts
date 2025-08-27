@@ -3,7 +3,7 @@ import { apiSlice } from "./apiSlice";
 export const coursesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getCourses: builder.query({
-      query: ({ page = 1, limit = 10 } = {}) => `/api/courses?page=${page}&limit=${limit}`,
+      query: ({ page = 1, limit = 10 }: { page?: number; limit?: number } = {}) => `/api/courses?page=${page}&limit=${limit}`,
     }),
     getCourseById: builder.query({
       query: (id) => `/api/courses/${id}`,
@@ -40,7 +40,7 @@ export const coursesApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     getCoupons: builder.query({
-      query: ({ page = 1, limit = 10, used = "false" } = {}) => ({
+      query: ({ page = 1, limit = 10, used = "false" }: { page?: number; limit?: number; used?: string } = {}) => ({
         url: `/api/admin/coupons?page=${page}&limit=${limit}&used=${used}`,
         credentials: "include",
       }),

@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { Button } from '../components/ui/button';
 import { toast } from 'react-toastify';
 import { useAuth } from '../hooks/useAuth';
-import { useSettings } from '../contexts/SettingsContext';
 import { useTranslation } from '../hooks/useTranslation';
 import { COURSE_DETAIL_PLACEHOLDER } from '../utils/placeholderImage';
 import { Link } from 'react-router-dom';
@@ -319,7 +318,7 @@ const CourseDetailPage: React.FC = () => {
             <Card>
               <CardContent className="p-6">
                 <div className="space-y-3">
-                  {course.videos.map((video, index) => (
+                  {course.videos.map((_, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <span className="font-medium">Lesson {index + 1}</span>
                       <span className="text-sm text-gray-500">Video</span>
