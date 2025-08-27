@@ -458,26 +458,26 @@ const CourseWatchPage: React.FC = () => {
               <span className="font-medium">Back to Courses</span>
             </button>
           </div>
-          <div className="text-right">
-            <div className="px-4 lg:px-32 xl:px-64 text-right">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <div className="text-right flex-1">
+            <div className="px-2 sm:px-4 lg:px-8 xl:px-16 text-right">
+              <h1 className="text-sm sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
               {course?.name}
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{course?.category}</p>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">{course?.category}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-8">
+      <div className="w-full px-2 sm:px-4 lg:px-6 py-4 lg:py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="flex flex-col xl:flex-row gap-4 lg:gap-8">
             {/* Enhanced Video Player */}
-            <div className="lg:col-span-3">
+            <div className="flex-1 xl:flex-none xl:w-3/4">
               <div 
                 ref={containerRef}
-                className="relative bg-black rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5 dark:ring-white/10"
+                className="relative bg-black rounded-xl lg:rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5 dark:ring-white/10"
                 onMouseMove={handleMouseMove}
               >
                 <div className="aspect-video relative">
@@ -495,16 +495,16 @@ const CourseWatchPage: React.FC = () => {
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 flex items-center justify-center">
-                      <div className="text-center">
+                      <div className="text-center px-4">
                         <div className="relative">
-                          <div className="animate-spin w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full mx-auto mb-6"></div>
-                          <div className="absolute inset-0 animate-ping w-16 h-16 border-4 border-blue-400/20 rounded-full mx-auto"></div>
+                          <div className="animate-spin w-12 sm:w-16 h-12 sm:h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full mx-auto mb-4 sm:mb-6"></div>
+                          <div className="absolute inset-0 animate-ping w-12 sm:w-16 h-12 sm:h-16 border-4 border-blue-400/20 rounded-full mx-auto"></div>
                         </div>
-                        <p className="text-white/90 text-lg font-medium mb-6">Loading secure video...</p>
+                        <p className="text-white/90 text-base sm:text-lg font-medium mb-4 sm:mb-6">Loading secure video...</p>
                         <Button 
                           onClick={() => refetch()} 
                           variant="outline" 
-                          className="text-white border-white/30 hover:border-white hover:bg-white/10 transition-all duration-200"
+                          className="text-white border-white/30 hover:border-white hover:bg-white/10 transition-all duration-200 text-sm sm:text-base"
                         >
                           Retry Loading
                         </Button>
@@ -520,84 +520,84 @@ const CourseWatchPage: React.FC = () => {
                       <div className="absolute inset-0 flex items-center justify-center">
                         <button
                           onClick={togglePlay}
-                          className="group bg-white/10 backdrop-blur-md rounded-full p-8 hover:bg-white/20 transition-all duration-300 transform hover:scale-105 border border-white/20"
+                          className="group bg-white/10 backdrop-blur-md rounded-full p-4 sm:p-6 lg:p-8 hover:bg-white/20 transition-all duration-300 transform hover:scale-105 border border-white/20"
                         >
                           {hasEnded ? (
-                            <RotateCcw className="h-16 w-16 text-white group-hover:text-blue-200 transition-colors" />
+                            <RotateCcw className="h-8 w-8 sm:h-12 sm:w-12 lg:h-16 lg:w-16 text-white group-hover:text-blue-200 transition-colors" />
                           ) : (
-                            <Play className="h-16 w-16 text-white ml-2 group-hover:text-blue-200 transition-colors" />
+                            <Play className="h-8 w-8 sm:h-12 sm:w-12 lg:h-16 lg:w-16 text-white ml-1 sm:ml-1.5 lg:ml-2 group-hover:text-blue-200 transition-colors" />
                           )}
                         </button>
                         {hasEnded && (
-                          <div className="absolute -bottom-20 text-center animate-fade-in">
-                            <p className="text-white text-lg font-semibold mb-2">Video Completed</p>
-                            <p className="text-white/80 text-sm">Click to replay</p>
+                          <div className="absolute -bottom-16 sm:-bottom-20 text-center animate-fade-in px-4">
+                            <p className="text-white text-sm sm:text-lg font-semibold mb-1 sm:mb-2">Video Completed</p>
+                            <p className="text-white/80 text-xs sm:text-sm">Click to replay</p>
                           </div>
                         )}
                       </div>
                     )}
 
                     {/* Enhanced Bottom Controls */}
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 lg:p-6">
                       {/* Progress Bar */}
-                      <div className="mb-4">
+                      <div className="mb-2 sm:mb-4">
                         <input
                           type="range"
                           min={0}
                           max={duration || 0}
                           value={currentTime}
                           onChange={handleSeek}
-                          className="w-full h-2 bg-white/20 rounded-full appearance-none cursor-pointer slider hover:h-3 transition-all"
+                          className="w-full h-2 lg:h-2 bg-white/20 rounded-full appearance-none cursor-pointer slider hover:h-3 transition-all"
                           style={{
                             background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${duration ? (currentTime / duration) * 100 : 0}%, rgba(255,255,255,0.2) ${duration ? (currentTime / duration) * 100 : 0}%, rgba(255,255,255,0.2) 100%)`
                           }}
                         />
-                        <div className="flex justify-between text-xs text-white/80 mt-2 font-mono">
-                          <span className="bg-black/30 px-2 py-1 rounded">{formatTime(currentTime)}</span>
-                          <span className="bg-black/30 px-2 py-1 rounded">{formatTime(duration)}</span>
+                        <div className="flex justify-between text-xs text-white/80 mt-1 sm:mt-2 font-mono">
+                          <span className="bg-black/30 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-xs">{formatTime(currentTime)}</span>
+                          <span className="bg-black/30 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-xs">{formatTime(duration)}</span>
                         </div>
                       </div>
                       
                       {/* Control Buttons */}
                       <div className="flex items-center justify-between text-white">
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3">
                           <button
                             onClick={togglePlay}
-                            className="p-3 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110"
+                            className="p-2 sm:p-3 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110"
                             title={`${hasEnded ? 'Replay' : isPlaying ? 'Pause' : 'Play'} (Space or K)`}
                           >
                             {hasEnded ? (
-                              <RotateCcw className="h-6 w-6" />
+                              <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
                             ) : isPlaying ? (
-                              <Pause className="h-6 w-6" />
+                              <Pause className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
                             ) : (
-                              <Play className="h-6 w-6" />
+                              <Play className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
                             )}
                           </button>
                           
                           <button
                             onClick={() => skipTime(-10)}
-                            className="p-2 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110"
+                            className="p-1.5 sm:p-2 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110"
                             title="Skip back 10s (← or J)"
                           >
-                            <RotateCcw className="h-5 w-5" />
+                            <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5" />
                           </button>
                           
                           <button
                             onClick={() => skipTime(10)}
-                            className="p-2 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110"
+                            className="p-1.5 sm:p-2 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110"
                             title="Skip forward 10s (→ or L)"
                           >
-                            <RotateCw className="h-5 w-5" />
+                            <RotateCw className="h-4 w-4 sm:h-5 sm:w-5" />
                           </button>
 
-                          <div className="flex items-center space-x-2 bg-black/20 rounded-full px-3 py-2">
+                          <div className="flex items-center space-x-1 sm:space-x-2 bg-black/20 rounded-full px-2 sm:px-3 py-1 sm:py-2">
                             <button
                               onClick={toggleMute}
-                              className="p-1 hover:bg-white/20 rounded-full transition-all duration-200"
+                              className="p-0.5 sm:p-1 hover:bg-white/20 rounded-full transition-all duration-200"
                               title={`${isMuted ? 'Unmute' : 'Mute'} (M)`}
                             >
-                              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                              {isMuted ? <VolumeX className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" /> : <Volume2 className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />}
                             </button>
                             <input
                               type="range"
@@ -606,27 +606,27 @@ const CourseWatchPage: React.FC = () => {
                               step={0.1}
                               value={isMuted ? 0 : volume}
                               onChange={handleVolumeChange}
-                              className="w-20 h-1 bg-white/30 rounded-full appearance-none cursor-pointer hover:h-2 transition-all"
+                              className="w-12 sm:w-16 lg:w-20 h-1 bg-white/30 rounded-full appearance-none cursor-pointer hover:h-2 transition-all"
                               title="Volume (↑ ↓ arrows)"
                             />
                           </div>
                         </div>
 
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1 sm:space-x-2">
                           <button
                             onClick={() => setShowKeyboardHelp(true)}
-                            className="p-3 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110"
+                            className="p-2 sm:p-3 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110"
                             title="Keyboard shortcuts (?)"
                           >
-                            <span className="text-white text-lg font-bold">⌨</span>
+                            <span className="text-white text-sm sm:text-lg font-bold">⌨</span>
                           </button>
 
                           <button
                             onClick={toggleFullscreen}
-                            className="p-3 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110"
+                            className="p-2 sm:p-3 hover:bg-white/20 rounded-full transition-all duration-200 hover:scale-110"
                             title="Fullscreen (F)"
                           >
-                            <Maximize className="h-5 w-5" />
+                            <Maximize className="h-4 w-4 sm:h-5 sm:w-5" />
                           </button>
                         </div>
                       </div>
@@ -637,19 +637,19 @@ const CourseWatchPage: React.FC = () => {
             </div>
 
             {/* Enhanced Course Information Sidebar */}
-            <div className="lg:col-span-1">
-              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-6 sticky top-8">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full animate-pulse"></div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Course Details</h2>
+            <div className="flex-1 xl:flex-none xl:w-1/4">
+              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-xl lg:rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-4 lg:p-6 sticky top-4 lg:top-8">
+                <div className="flex items-center space-x-2 lg:space-x-3 mb-4 lg:mb-6">
+                  <div className="w-2 h-2 lg:w-3 lg:h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full animate-pulse"></div>
+                  <h2 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">Course Details</h2>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-4 lg:space-y-6">
                   <div className="group">
-                    <h3 className="font-semibold text-gray-900 dark:text-white text-lg mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    <h3 className="font-semibold text-gray-900 dark:text-white text-base lg:text-lg mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {course?.name}
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
                       {course?.description}
                     </p>
                   </div>
