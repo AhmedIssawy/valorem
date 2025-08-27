@@ -27,6 +27,8 @@ const CourseWatchPage: React.FC = () => {
   const { data: videosData, isLoading: isVideosLoading, error: videosError, refetch } = useGetCourseVideosQuery(id!, {
     skip: !isAuthenticated, // Skip if user is not logged in
   });
+  console.log(videosData);
+  
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {

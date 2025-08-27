@@ -3,6 +3,26 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 class R2Service {
   constructor() {
+    this.client = null;
+    this.bucketName = null;
+    this.initialized = false;
+  }
+
+  // Initialize the service with environment variables
+  init() {
+    if (this.initialized) return;
+
+    // Ensure environment variables are available
+    if (!process.env.R2_ACCOUNT_ID || !process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY || !process.env.R2_BUCKET_NAME) {
+      console.error("❌ Missing R2 environment variables:", {
+        R2_ACCOUNT_ID: !!process.env.R2_ACCOUNT_ID,
+        R2_ACCESS_KEY_ID: !!process.env.R2_ACCESS_KEY_ID,
+        R2_SECRET_ACCESS_KEY: !!process.env.R2_SECRET_ACCESS_KEY,
+        R2_BUCKET_NAME: !!process.env.R2_BUCKET_NAME
+      });
+      throw new Error("Missing required R2 environment variables");
+    }
+    
     this.client = new S3Client({
       region: "auto",
       endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
@@ -12,6 +32,9 @@ class R2Service {
       },
     });
     this.bucketName = process.env.R2_BUCKET_NAME;
+    this.initialized = true;
+    
+    console.log("🔧 R2Service initialized with bucket:", this.bucketName);
   }
 
   /**
@@ -31,11 +54,24 @@ class R2Service {
 
   // Utility to clean key if full URL is passed
   extractKey(input) {
-    return input.replace(/^https?:\/\/[^/]+\//, ""); 
+    if (input.startsWith('http')) {
+      // For URLs like: https://0304a825db1f41fe8299eb33eaf219fc.r2.cloudflarestorage.com/valorem/D2672606-A7C2-48ab-8C25-6C38AAD84932_video.mp4
+      // We need to extract: D2672606-A7C2-48ab-8C25-6C38AAD84932_video.mp4 (without the bucket name)
+      const url = new URL(input);
+      const pathParts = url.pathname.substring(1).split('/'); // Remove leading slash and split
+      if (pathParts.length > 1 && pathParts[0] === this.bucketName) {
+        // Remove bucket name from path: valorem/filename.mp4 -> filename.mp4
+        return pathParts.slice(1).join('/');
+      }
+      return url.pathname.substring(1); // Return full path without leading slash
+    }
+    return input; // Already a key
   }
 
  async generateSignedVideoUrl(keyOrUrl, expiresIn = 300) {
   try {
+    this.init(); // Ensure service is initialized
+    
     console.log("🔑 [generateSignedVideoUrl] Input:", keyOrUrl);
 
     const key = this.extractKey(keyOrUrl);
@@ -62,11 +98,18 @@ class R2Service {
 
 async videoExists(keyOrUrl) {
   try {
+    this.init(); // Ensure service is initialized
+    
     console.log("🔎 [videoExists] Input:", keyOrUrl);
+    console.log("🔧 [videoExists] R2 Config:", {
+      accountId: process.env.R2_ACCOUNT_ID,
+      bucketName: this.bucketName,
+      hasAccessKey: !!process.env.R2_ACCESS_KEY_ID,
+      hasSecretKey: !!process.env.R2_SECRET_ACCESS_KEY
+    });
 
     const key = this.extractKey(keyOrUrl);
     console.log("🎯 [videoExists] Extracted key:", key);
-    console.log("🪣 [videoExists] Bucket name from env:", this.bucketName);
 
     const command = new HeadObjectCommand({
       Bucket: this.bucketName,
@@ -77,15 +120,38 @@ async videoExists(keyOrUrl) {
       Key: key,
     });
 
-    await this.client.send(command);
+    const result = await this.client.send(command);
     console.log("✅ [videoExists] Video exists in R2:", key);
+    console.log("📊 [videoExists] Object metadata:", {
+      contentLength: result.ContentLength,
+      contentType: result.ContentType,
+      lastModified: result.LastModified
+    });
 
     return true;
   } catch (error) {
+    console.error("❌ [videoExists] Full error details:", {
+      name: error.name,
+      message: error.message,
+      code: error.Code,
+      statusCode: error.$metadata?.httpStatusCode,
+      requestId: error.$metadata?.requestId
+    });
+    
     if (error.name === "NotFound" || error.$metadata?.httpStatusCode === 404) {
-      console.warn("⚠️ [videoExists] Video not found:", keyOrUrl);
+      console.warn("⚠️ [videoExists] Video not found in bucket:", {
+        bucket: this.bucketName,
+        key: key,
+        originalInput: keyOrUrl
+      });
       return false;
     }
+    
+    if (error.name === "AccessDenied" || error.$metadata?.httpStatusCode === 403) {
+      console.error("🚫 [videoExists] Access denied - check R2 credentials and permissions");
+      throw new Error("Access denied to R2 storage. Check credentials and permissions.");
+    }
+    
     console.error("❌ [videoExists] Unexpected error:", error);
     throw error;
   }
